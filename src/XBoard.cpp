@@ -181,11 +181,12 @@ void XBoard_Button::loop() {
         if (pressed) {
             lastButtonPressedMillis_ = currentMillis;
             buttonState_ = Pressed;
-            Serial.println(F("Pressed"));
+            //Serial.println(F("Pressed"));
         }
         else {
             //lastButtonReleasedMillis_ = currentMillis;
-            Serial.println(F("Released"));
+            //Serial.println(F("Released"));
+
             if (releasedCallback_) {
                 releasedCallback_();
             }
