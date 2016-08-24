@@ -1,6 +1,6 @@
 {
-  "name": "EspX",
-  "keywords": "iot, xboard, iothub.id, cloud, devboard",
+  "name": "ESPectro",
+  "keywords": "iot, ESPectro, iothub.id, cloud, devboard",
   "description": "ESP8266 Extended Library, especially for iothub.id client & XBoard",
   "authors":
   {

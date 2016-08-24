@@ -135,11 +135,15 @@ void XBoard_Button::begin() {
 }
 
 void XBoard_Button::OnPressed(ButtonActionCallback cb) {
-    pressedCallback_ = cb;
+    btnDownCallback_ = cb;
 }
 
-void XBoard_Button::OnReleased(ButtonActionCallback cb) {
-    releasedCallback_ = cb;
+void XBoard_Button::OnButtonDown(ButtonActionCallback cb) {
+    btnDownCallback_ = cb;
+}
+
+void XBoard_Button::OnButtonUp(ButtonActionCallback cb) {
+    btnUpCallback_ = cb;
 }
 
 void XBoard_Button::OnLongPressed(ButtonActionCallback cb) {
@@ -182,13 +186,16 @@ void XBoard_Button::loop() {
             lastButtonPressedMillis_ = currentMillis;
             buttonState_ = Pressed;
             //Serial.println(F("Pressed"));
+            if (btnDownCallback_) {
+                btnDownCallback_();
+            }
         }
         else {
             //lastButtonReleasedMillis_ = currentMillis;
             //Serial.println(F("Released"));
 
-            if (releasedCallback_) {
-                releasedCallback_();
+            if (btnUpCallback_) {
+                btnUpCallback_();
             }
 
             if (buttonState_ != LongPressed && currentMillis - lastButtonPressedMillis_ > XBOARD_BUTTON_PRESS_DURATION_MS) {
@@ -201,3 +208,5 @@ void XBoard_Button::loop() {
         }
     }
 }
+
+

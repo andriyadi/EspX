@@ -22,7 +22,7 @@
 
 class XBoard_LED {
 public:
-    XBoard_LED(byte pin = XBOARD_LED_PIN, boolean activeHigh = false);
+    XBoard_LED(byte pin = XBOARD_LED_PIN, boolean activeHigh = true);
     ~XBoard_LED();
 
     void begin();
@@ -66,8 +66,9 @@ public:
     void begin();
     XBoard_Button_State getState();
     void loop();
+    void OnButtonDown(ButtonActionCallback cb);
+    void OnButtonUp(ButtonActionCallback cb);
     void OnPressed(ButtonActionCallback cb);
-    void OnReleased(ButtonActionCallback cb);
     void OnLongPressed(ButtonActionCallback cb);
 
 private:
@@ -77,8 +78,9 @@ private:
 
     unsigned long lastButtonChangedMillis_  = 0, lastButtonPressedMillis_ = 0;
 
+    ButtonActionCallback btnDownCallback_;
+    ButtonActionCallback btnUpCallback_;
     ButtonActionCallback pressedCallback_;
-    ButtonActionCallback releasedCallback_;
     ButtonActionCallback longPressedCallback_;
 };
 
