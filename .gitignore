@@ -1,7 +1,7 @@
 .pioenvs
 CMakeListsPrivate.txt
 examples/
-src/XboardSample.cpp
+src/ESPectro_Sample.cpp
 .DS_Store
 lib/SFE_BMP180/
 .idea/

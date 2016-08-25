@@ -13,10 +13,10 @@
 #define PCF8574_PIN_ERROR   0x81
 #define PCF8574_I2C_ERROR   0x82
 
-class XBoard_GpioEx {
+class ESPectro_GpioEx {
 public:
-    XBoard_GpioEx(uint8_t address = 0x38); //atau 0x20)
-    ~XBoard_GpioEx();
+    ESPectro_GpioEx(uint8_t address = 0x38); //atau 0x20)
+    ~ESPectro_GpioEx();
 
     /**
     * Start the I2C controller and store the PCF8574 chip address

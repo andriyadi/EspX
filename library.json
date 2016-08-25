@@ -1,7 +1,7 @@
 {
   "name": "ESPectro",
   "keywords": "iot, ESPectro, iothub.id, cloud, devboard",
-  "description": "ESP8266 Extended Library, especially for iothub.id client & XBoard",
+  "description": "ESP8266 extended library, especially for iothub.id client & ESPectro devboard by DycodeX",
   "authors":
   {
     "name": "Andri Yadi",
@@ -17,8 +17,20 @@
   "platforms": "espressif",
   "dependencies": [
     {
+      "name": "Json",
+      "authors": "Benoit Blanchon",
+      "frameworks": "arduino",
+      "platforms": "espressif"
+    },
+    {
       "name": "AsyncMqttClient",
       "authors": "Marvin Roger",
+      "frameworks": "arduino",
+      "platforms": "espressif"
+    },
+    {
+      "name": "NeoPixelBus",
+      "authors": "Michael Miller",
       "frameworks": "arduino",
       "platforms": "espressif"
     }

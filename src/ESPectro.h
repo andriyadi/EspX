@@ -6,24 +6,15 @@
 #define XBOARD_XBOARD_H
 
 #include "Arduino.h"
+#include "ESPectro_Constants.h"
 #include <Ticker.h>
 #include <functional>
 //#include <exception>
 
-//Constats
-#define XBOARD_LED_PIN 15
-#define XBOARD_NEOPIXEL_PIN 15
-
-#define XBOARD_BUTTON_PIN 2
-#define XBOARD_BUTTON_DEBOUNCE_DURATION_MS      50
-#define XBOARD_BUTTON_PRESS_DURATION_MS         100
-#define XBOARD_BUTTON_LONG_PRESS_DURATION_MS    700
-
-
-class XBoard_LED {
+class ESPectro_LED {
 public:
-    XBoard_LED(byte pin = XBOARD_LED_PIN, boolean activeHigh = true);
-    ~XBoard_LED();
+    ESPectro_LED(byte pin = XBOARD_LED_PIN, boolean activeHigh = true);
+    ~ESPectro_LED();
 
     void begin();
     void turnOn();
@@ -32,6 +23,7 @@ public:
     byte getPin();
     void blink(int interval = 500);
     void stopBlink();
+    void toggle();
 
 private:
     byte pin_;
@@ -39,32 +31,34 @@ private:
     Ticker *blinkTicker_ = NULL;
 };
 
-class XBoard {
+class ESPectro {
 public:
-    XBoard();
-    ~XBoard();
+    ESPectro();
+    ~ESPectro();
 
     //LED convinient methods
-    XBoard_LED &getLED();
+    ESPectro_LED &getLED();
     void turnOnLED();
     void turnOffLED();
     void blinkLED(int interval = 500);
     void stopBlinkLED();
+    void toggleLED();
 
 private:
-    XBoard_LED *led_ = NULL;
+    ESPectro_LED *led_ = NULL;
 
 };
 
-enum XBoard_Button_State { Pressed, Released, LongPressed};
+enum ESPectro_Button_State { Pressed, Released, LongPressed};
 typedef std::function<void()> ButtonActionCallback;
-class XBoard_Button {
+
+class ESPectro_Button {
 public:
-    XBoard_Button(uint8_t pin = XBOARD_BUTTON_PIN, boolean activeHigh = false);
-    ~XBoard_Button();
+    ESPectro_Button(uint8_t pin = XBOARD_BUTTON_PIN, boolean activeHigh = false);
+    ~ESPectro_Button();
 
     void begin();
-    XBoard_Button_State getState();
+    ESPectro_Button_State getState();
     void loop();
     void OnButtonDown(ButtonActionCallback cb);
     void OnButtonUp(ButtonActionCallback cb);
@@ -74,7 +68,7 @@ public:
 private:
     uint8_t pin_;
     boolean activeHigh_;
-    XBoard_Button_State buttonState_ = Released;
+    ESPectro_Button_State buttonState_ = Released;
 
     unsigned long lastButtonChangedMillis_  = 0, lastButtonPressedMillis_ = 0;
 

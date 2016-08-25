@@ -3,41 +3,41 @@
 //
 
 #include <c_types.h>
-#include "XBoard.h"
+#include "ESPectro.h"
 
-XBoard_LED::XBoard_LED(byte pin, boolean activeHigh):pin_(pin), activeHigh_(activeHigh) {
+ESPectro_LED::ESPectro_LED(byte pin, boolean activeHigh): pin_(pin), activeHigh_(activeHigh) {
 }
 
-XBoard_LED::~XBoard_LED() {
+ESPectro_LED::~ESPectro_LED() {
     if (blinkTicker_ != NULL) {
         delete blinkTicker_;
         blinkTicker_ = NULL;
     }
 }
 
-void XBoard_LED::begin() {
+void ESPectro_LED::begin() {
     pinMode(XBOARD_LED_PIN, OUTPUT);
     turnOff();
 }
 
-void XBoard_LED::turnOn() {
+void ESPectro_LED::turnOn() {
     digitalWrite(pin_, activeHigh_? HIGH: LOW);
 }
 
-void XBoard_LED::turnOff() {
+void ESPectro_LED::turnOff() {
     digitalWrite(pin_, activeHigh_? LOW: HIGH);
 }
 
-boolean XBoard_LED::isOn() {
+boolean ESPectro_LED::isOn() {
     int val = digitalRead(pin_);
     return activeHigh_? (val == HIGH): (val == LOW);
 }
 
-byte XBoard_LED::getPin() {
+byte ESPectro_LED::getPin() {
     return pin_;
 }
 
-void doBlink(XBoard_LED *led) {
+void doBlink(ESPectro_LED *led) {
     boolean isOn = led->isOn();
     if (isOn) {
         led->turnOff();
@@ -47,7 +47,7 @@ void doBlink(XBoard_LED *led) {
     }
 }
 
-void XBoard_LED::stopBlink() {
+void ESPectro_LED::stopBlink() {
     if (blinkTicker_ != NULL) {
         blinkTicker_->detach();
         delete blinkTicker_;
@@ -55,7 +55,7 @@ void XBoard_LED::stopBlink() {
     }
 }
 
-void XBoard_LED::blink(int interval) {
+void ESPectro_LED::blink(int interval) {
 
     if (blinkTicker_ == NULL) {
         blinkTicker_ = new Ticker();
@@ -65,11 +65,22 @@ void XBoard_LED::blink(int interval) {
     blinkTicker_->attach_ms(interval, doBlink, this);
 }
 
-XBoard::XBoard() {
+void ESPectro_LED::toggle() {
+    if (isOn()) {
+        turnOff();
+    }
+    else {
+        turnOn();
+    }
+}
+
+
+
+ESPectro::ESPectro() {
 
 }
 
-XBoard::~XBoard() {
+ESPectro::~ESPectro() {
     if (led_ != NULL) {
         delete led_;
         led_ = NULL;
@@ -77,42 +88,45 @@ XBoard::~XBoard() {
 }
 
 
-void XBoard::turnOnLED() {
+void ESPectro::turnOnLED() {
     getLED().turnOn();
 }
 
-void XBoard::turnOffLED() {
+void ESPectro::turnOffLED() {
     getLED().turnOff();
 }
 
-void XBoard::blinkLED(int interval) {
+void ESPectro::blinkLED(int interval) {
     getLED().blink(interval);
 }
 
-XBoard_LED &XBoard::getLED() {
+ESPectro_LED &ESPectro::getLED() {
     if (led_ == NULL) {
-        led_ = new XBoard_LED();
+        led_ = new ESPectro_LED();
         led_->begin();
     }
 
     return *led_;
 }
 
-void XBoard::stopBlinkLED() {
+void ESPectro::stopBlinkLED() {
     getLED().stopBlink();
 }
 
+void ESPectro::toggleLED() {
+    getLED().toggle();
+}
 
 
 static volatile boolean XBoard_Button_Value_Changed = false;
 
-XBoard_Button::XBoard_Button(uint8_t pin, boolean activeHigh):
+ESPectro_Button::ESPectro_Button(uint8_t pin, boolean activeHigh):
         pin_(pin), activeHigh_(activeHigh)
 
 {
 }
 
-XBoard_Button::~XBoard_Button() {
+ESPectro_Button::~ESPectro_Button() {
 
 }
 
@@ -121,7 +135,7 @@ void XBoard_Button_Interrupt() {
     //Serial.printf("Button triggered %d\r\n", digitalRead(XBOARD_BUTTON_PIN));
 }
 
-void XBoard_Button::begin() {
+void ESPectro_Button::begin() {
     pinMode(pin_, activeHigh_? INPUT_PULLDOWN_16: INPUT_PULLUP);
     if (pin_ != 16) {
         attachInterrupt(pin_, XBoard_Button_Interrupt, CHANGE);
@@ -134,28 +148,28 @@ void XBoard_Button::begin() {
 //    }
 }
 
-void XBoard_Button::OnPressed(ButtonActionCallback cb) {
+void ESPectro_Button::OnPressed(ButtonActionCallback cb) {
     btnDownCallback_ = cb;
 }
 
-void XBoard_Button::OnButtonDown(ButtonActionCallback cb) {
+void ESPectro_Button::OnButtonDown(ButtonActionCallback cb) {
     btnDownCallback_ = cb;
 }
 
-void XBoard_Button::OnButtonUp(ButtonActionCallback cb) {
+void ESPectro_Button::OnButtonUp(ButtonActionCallback cb) {
     btnUpCallback_ = cb;
 }
 
-void XBoard_Button::OnLongPressed(ButtonActionCallback cb) {
+void ESPectro_Button::OnLongPressed(ButtonActionCallback cb) {
     longPressedCallback_ = cb;
 }
 
-XBoard_Button_State XBoard_Button::getState() {
+ESPectro_Button_State ESPectro_Button::getState() {
     //return digitalRead(pin_);
     return Released;
 }
 
-void XBoard_Button::loop() {
+void ESPectro_Button::loop() {
     unsigned long currentMillis = millis();
 
     if (!XBoard_Button_Value_Changed) {
