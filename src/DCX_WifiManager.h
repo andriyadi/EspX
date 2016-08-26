@@ -6,7 +6,7 @@
 #define XBOARD_ESPECTRO_WIFIMANAGER_H
 
 #include <Arduino.h>
-#include "ESPectro_AppSetting.h"
+#include "DCX_AppSetting.h"
 #include <ESP8266WiFi.h>
 #include <functional>
 #include <Ticker.h>
@@ -20,10 +20,10 @@ typedef std::function<void()> WifiConnectionCallback;
 typedef std::function<void(boolean)> WifiConnectedCallback;
 typedef std::function<void(unsigned long elapsedTime)> WifiConnectingCallback;
 
-class ESPectro_WifiManager {
+class DCX_WifiManager {
 public:
-    ESPectro_WifiManager(ESPectro_AppSetting &setting);
-    ~ESPectro_WifiManager();
+    DCX_WifiManager(DCX_AppSetting &setting);
+    ~DCX_WifiManager();
 
     void begin();
     void loop();
@@ -31,10 +31,10 @@ public:
     //void setConnectedDelegate(ConnectionDelegate connectedDelegate);
     void startSmartConfig();
 
-    void OnWifiConnectStarted(WifiConnectionCallback cb);
-    void OnWifiConnected(WifiConnectedCallback cb);
-    void OnWifiDisconnected(WifiConnectionCallback cb);
-    void OnWifiConnecting(WifiConnectingCallback cb);
+    void onWifiConnectStarted(WifiConnectionCallback cb);
+    void onWifiConnected(WifiConnectedCallback cb);
+    void onWifiDisconnected(WifiConnectionCallback cb);
+    void onWifiConnecting(WifiConnectingCallback cb);
 
     bool isWifiConnected();
 
@@ -42,7 +42,7 @@ public:
     void setWifiConnecting();
 
 private:
-    ESPectro_AppSetting &setting_;
+    DCX_AppSetting &setting_;
 
     //volatile boolean wifiConnectRequested_ = false;
     volatile boolean connectedToWifi_ = false;

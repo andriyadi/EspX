@@ -47,7 +47,7 @@ void IoTHubClient::publishData(String payload) {
     publish("data", payload);
 }
 
-void IoTHubClient::subscribeWithHandler(String topic, IoTHubSubscribedTopicMessageCallback callback) {
+void IoTHubClient::subscribeWithCallback(String topic, IoTHubSubscribedTopicMessageCallback callback) {
     if (username_ != NULL && !topic.startsWith(String(username_))) {
         String project = String(projectName_);
         project.toLowerCase();

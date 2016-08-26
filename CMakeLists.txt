@@ -49,5 +49,7 @@ include_directories("$ENV{HOME}/.platformio/lib/AsyncMqttClient_ID346/src")
 include_directories("$ENV{HOME}/.platformio/lib/Json_ID64")
 include_directories("$ENV{HOME}/.platformio/lib/NeoPixelBus_ID547/src")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/SFE_BMP180/src")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/SX1272")
+#include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/SX1272")
 
 add_executable(${PROJECT_NAME} ${SRC_LIST} src/ESPectro_Sample.cpp)

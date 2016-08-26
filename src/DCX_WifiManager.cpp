@@ -2,7 +2,7 @@
 // Created by Andri Yadi on 8/25/16.
 //
 
-#include "ESPectro_WifiManager.h"
+#include "DCX_WifiManager.h"
 
 Ticker *tickerCheckConn = NULL, *tickerSmartConfig = NULL;
 volatile byte wifiConnTrial_ = 0;
@@ -26,7 +26,7 @@ void cleanupTickerSmartConfig() {
     }
 }
 
-void checkWifiConn(ESPectro_WifiManager *wifiMgr) {
+void checkWifiConn(DCX_WifiManager *wifiMgr) {
     bool _giveUp = false;
 
     int timeout = !smartConfigRequested_? (30000 / (500)): (120000 / (500));
@@ -95,17 +95,17 @@ void checkWifiConn(ESPectro_WifiManager *wifiMgr) {
     }
 }
 
-ESPectro_WifiManager::ESPectro_WifiManager(ESPectro_AppSetting &setting):
+DCX_WifiManager::DCX_WifiManager(DCX_AppSetting &setting):
         setting_(setting) {
 
 }
 
-ESPectro_WifiManager::~ESPectro_WifiManager() {
+DCX_WifiManager::~DCX_WifiManager() {
     cleanupTickerCheckConn();
     cleanupTickerSmartConfig();
 }
 
-void ESPectro_WifiManager::begin() {
+void DCX_WifiManager::begin() {
     WiFi.mode(WIFI_STA);
 
     if (!setting_.exist() || !setting_.wifiConfigured || SETTING_FORCE_INIT)
@@ -117,7 +117,7 @@ void ESPectro_WifiManager::begin() {
     }
 }
 
-void ESPectro_WifiManager::loop() {
+void DCX_WifiManager::loop() {
 
     if (connectingToWifi_ && !connectedToWifi_) {
         Serial.print("X");
@@ -138,7 +138,7 @@ void ESPectro_WifiManager::loop() {
     }
 }
 
-void ESPectro_WifiManager::startSmartConfig() {
+void DCX_WifiManager::startSmartConfig() {
 
     DEBUG_SERIAL("DAMN, RECONFIG WIFI\n");
 
@@ -169,30 +169,30 @@ void ESPectro_WifiManager::startSmartConfig() {
     }
 }
 
-void ESPectro_WifiManager::OnWifiConnectStarted(WifiConnectionCallback cb) {
+void DCX_WifiManager::onWifiConnectStarted(WifiConnectionCallback cb) {
     wifiConnectStartedCallback_ = cb;
 }
 
-void ESPectro_WifiManager::OnWifiConnected(WifiConnectedCallback cb) {
+void DCX_WifiManager::onWifiConnected(WifiConnectedCallback cb) {
     wifiConnectedHandler_ = cb;
 }
 
-void ESPectro_WifiManager::OnWifiDisconnected(WifiConnectionCallback cb) {
+void DCX_WifiManager::onWifiDisconnected(WifiConnectionCallback cb) {
     wifiDisconnectedHandler_ = cb;
 }
 
-void ESPectro_WifiManager::OnWifiConnecting(WifiConnectingCallback cb) {
+void DCX_WifiManager::onWifiConnecting(WifiConnectingCallback cb) {
     wifiConnectingCallback_ = cb;
 }
 
 
-void ESPectro_WifiManager::setWifiConnecting() {
+void DCX_WifiManager::setWifiConnecting() {
     if (wifiConnectingCallback_) {
         wifiConnectingCallback_(wifiConnTrial_*500);
     }
 }
 
-void ESPectro_WifiManager::setWifiConnected(boolean connected) {
+void DCX_WifiManager::setWifiConnected(boolean connected) {
 
     if (connected) {
 
@@ -242,7 +242,7 @@ void ESPectro_WifiManager::setWifiConnected(boolean connected) {
     }
 }
 
-void ESPectro_WifiManager::tryToConnectWifi() {
+void DCX_WifiManager::tryToConnectWifi() {
 
     DEBUG_SERIAL("YUHU, WIFI CONFIG READY! %s:%s\n", setting_.ssidName.c_str(), setting_.ssidPass.c_str());
     //WiFiMulti.addAP(settings_.ssidName.c_str(), settings_.ssidPass.c_str()); // Put you SSID and Password here
@@ -268,7 +268,7 @@ void ESPectro_WifiManager::tryToConnectWifi() {
     tickerCheckConn->attach(0.5, checkWifiConn, this);
 }
 
-bool ESPectro_WifiManager::isWifiConnected() {
+bool DCX_WifiManager::isWifiConnected() {
     return connectedToWifi_;
 }
 

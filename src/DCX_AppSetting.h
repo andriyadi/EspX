@@ -2,18 +2,18 @@
 // Created by Andri Yadi on 8/25/16.
 //
 
-#ifndef XBOARD_ESPECTRO_APPSETTING_H
-#define XBOARD_ESPECTRO_APPSETTING_H
+#ifndef XBOARD_DCX_APPSETTING_H
+#define XBOARD_DCX_APPSETTING_H
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <FS.h>
 #include <IPAddress.h>
-#include "ESPectro_Constants.h"
+#include "DCX_Constants.h"
 
 #define APP_SETTINGS_FILE "/espectro_setting.json" // leading point for security reasons :)
 
-struct ESPectro_AppSetting
+struct DCX_AppSetting
 {
     String ssidName;
     String ssidPass;
@@ -25,11 +25,24 @@ struct ESPectro_AppSetting
     String apPass = String(SETTING_DEFAULT_AP_PASS);
     uint16_t utc = 7;
 
+#ifdef LORA_SUPPORT
+    uint8_t loraGateway = LORA_DEFAULT_DEST_ADDR;
+    uint8_t loraNodeAddress = LORA_NODE_ADDRESS;
+    int		loraMode = LORA_LORAMODE;
+    uint8_t loraPackageNumber = 0;
+    uint8_t loraRetryCount = 0;
+#endif
+
     boolean load()
     {
         if (!SPIFFS.begin()) {
             DEBUG_SERIAL("SPIFFS init failed!\r\n");
             return false;
+        }
+
+        if (SETTING_FORCE_INIT) {
+            DEBUG_SERIAL("Removing setting file\r\n");
+            SPIFFS.remove(APP_SETTINGS_FILE);
         }
 
         if (exist())
@@ -61,6 +74,14 @@ struct ESPectro_AppSetting
 
             utc = config["utc"];
 
+#ifdef LORA_SUPPORT
+            loraGateway = config["loraGateway"];
+            loraNodeAddress = config["loraNodeAddress"];
+            loraMode = config["loraMode"];
+            loraPackageNumber = config["loraPackageNumber"];
+            loraRetryCount = config["loraRetryCount"];
+#endif
+
             //delete[] jsonString;
         }
         else {
@@ -89,6 +110,14 @@ struct ESPectro_AppSetting
         config["apPass"] = apPass.c_str();
         config["utc"] = utc;
 
+#ifdef LORA_SUPPORT
+        config["loraGateway"] = loraGateway;
+        config["loraNodeAddress"] = loraNodeAddress;
+        config["loraMode"] = loraMode;
+        config["loraPackageNumber"] = loraPackageNumber;
+        config["loraRetryCount"] = loraRetryCount;
+#endif
+
         //TODO: add direct file stream writing
         String rootString;
         root.printTo(rootString);
@@ -109,6 +138,12 @@ struct ESPectro_AppSetting
     void debugPrintTo(Print &p) {
         p.printf("wifiConfigured: %d\r\n", wifiConfigured);
         //p.printf("ssidName: %s\r\n", ssidName.c_str());
+
+#ifdef LORA_SUPPORT
+        p.printf("loraNodeAddress: %d\r\n", loraNodeAddress);
+        p.printf("loraMode: %d\r\n", loraMode);
+#endif
+
     }
 
     void parse(String jsonMessage)
@@ -127,11 +162,34 @@ struct ESPectro_AppSetting
         if (config.containsKey("utc")) {
             utc = config["utc"];
         }
+
+#ifdef LORA_SUPPORT
+        if (config.containsKey("loraGateway")) {
+            loraGateway = config["loraGateway"];
+        }
+
+        if (config.containsKey("loraNodeAddress")) {
+            loraNodeAddress = config["loraNodeAddress"];
+        }
+
+        if (config.containsKey("loraMode")) {
+            loraMode = config["loraMode"];
+        }
+
+        if (config.containsKey("loraPackageNumber")) {
+            loraPackageNumber = config["loraPackageNumber"];
+        }
+
+        if (config.containsKey("loraRetryCount")) {
+            loraRetryCount = config["loraRetryCount"];
+        }
+#endif
+
     }
 
     bool exist() { return SPIFFS.exists(APP_SETTINGS_FILE); }
 };
 
-static ESPectro_AppSetting AppSetting;
+static DCX_AppSetting AppSetting;
 
-#endif //XBOARD_ESPECTRO_APPSETTING_H
+#endif //XBOARD_DCX_APPSETTING_H

@@ -60,10 +60,10 @@ public:
     void begin();
     ESPectro_Button_State getState();
     void loop();
-    void OnButtonDown(ButtonActionCallback cb);
-    void OnButtonUp(ButtonActionCallback cb);
-    void OnPressed(ButtonActionCallback cb);
-    void OnLongPressed(ButtonActionCallback cb);
+    void onButtonDown(ButtonActionCallback cb);
+    void onButtonUp(ButtonActionCallback cb);
+    void onPressed(ButtonActionCallback cb);
+    void onLongPressed(ButtonActionCallback cb);
 
 private:
     uint8_t pin_;

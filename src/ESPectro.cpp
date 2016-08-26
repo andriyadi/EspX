@@ -148,19 +148,19 @@ void ESPectro_Button::begin() {
 //    }
 }
 
-void ESPectro_Button::OnPressed(ButtonActionCallback cb) {
+void ESPectro_Button::onPressed(ButtonActionCallback cb) {
     btnDownCallback_ = cb;
 }
 
-void ESPectro_Button::OnButtonDown(ButtonActionCallback cb) {
+void ESPectro_Button::onButtonDown(ButtonActionCallback cb) {
     btnDownCallback_ = cb;
 }
 
-void ESPectro_Button::OnButtonUp(ButtonActionCallback cb) {
+void ESPectro_Button::onButtonUp(ButtonActionCallback cb) {
     btnUpCallback_ = cb;
 }
 
-void ESPectro_Button::OnLongPressed(ButtonActionCallback cb) {
+void ESPectro_Button::onLongPressed(ButtonActionCallback cb) {
     longPressedCallback_ = cb;
 }
 

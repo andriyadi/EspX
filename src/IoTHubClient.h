@@ -32,7 +32,7 @@ public:
 
     AsyncMqttClient& onMessage(AsyncMqttClientInternals::OnMessageUserCallback callback);
 
-    void subscribeWithHandler(String topic, IoTHubSubscribedTopicMessageCallback callback);
+    void subscribeWithCallback(String topic, IoTHubSubscribedTopicMessageCallback callback);
     void subscribeProperty(String property, IoTHubSubscribedPropertyCallback callback);
 
     void publish(String topic, String payload);
