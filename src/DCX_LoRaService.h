@@ -26,12 +26,12 @@ public:
     void onMessageAcknowledged(LoraMessageAcknowledgedCallback callback);
     void onMessageAvailable(LoraMessageAvailableCallback callback);
     void publish(String topic, String payload, boolean shouldRetry = false, boolean withAck = true);
+    void publish(String payload, boolean shouldRetry = false, boolean withAck = true);
     void subscribe(String topic);
+    void setMessagePrefix(String msg);
 
     //convenience
-    void sendRawMessage(const char *msg, boolean withAck = true);
-    void publishDeviceStatus(const char* status);
-    void publishDeviceReg();
+    void sendRawMessage(uint8_t dest, const char *msg, boolean withAck = true);
 
     boolean isPublishing() {
         return publishing;
@@ -40,14 +40,14 @@ public:
 private:
     DCX_AppSetting &settings_;
     uint8_t message_[110];
+    String messagePrefix_;
 
     unsigned long lastTransmissionTime_ = 0;
     volatile boolean networkReady = false, publishing = false;
-    //volatile boolean retryLastMessage = false;
 
-    void doSendMessage(const char *msg, boolean withAck = true);
+    void doSendMessage(uint8_t dest, const char *msg, boolean withAck = true);
 
-    void handleAcknowledge(boolean success, const char *origMsg);
+    void handleAcknowledge(uint8_t dest, boolean success, const char *origMsg);
 
     LoraClientConnectedCallback connectedCallback_;
     LoraMessageAvailableCallback msgAvailableCallback_;

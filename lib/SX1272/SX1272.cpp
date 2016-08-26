@@ -3124,7 +3124,9 @@ int8_t SX1272::setPacketLength(uint8_t l)
     // comment by C. Pham
     // this delay is included in the send delay overhead
     // TODO: do we really need this delay?
-    delay(250);
+    //delay(250);
+    delay(100);
+
     return state;
 }
 
@@ -5442,6 +5444,10 @@ uint8_t SX1272::sendWithTimeout(uint16_t wait)
             {
                 previous = millis();
             }
+
+#ifdef ESP8266
+            yield();
+#endif
         }
         state = 1;
     }
@@ -5459,6 +5465,9 @@ uint8_t SX1272::sendWithTimeout(uint16_t wait)
             {
                 previous = millis();
             }
+#ifdef ESP8266
+            yield();
+#endif
         }
         state = 1;
     }
@@ -5926,6 +5935,11 @@ uint8_t SX1272::getACK(uint16_t wait)
             {
                 previous = millis();
             }
+
+#ifdef ESP8266
+            yield();
+#endif
+
         }
         if( bitRead(value, 6) == 1 )
         { // ACK received
@@ -5949,6 +5963,11 @@ uint8_t SX1272::getACK(uint16_t wait)
             {
                 previous = millis();
             }
+
+#ifdef ESP8266
+            yield();
+#endif
+
         }
         if( bitRead(value, 2) == 1 )
         { // ACK received

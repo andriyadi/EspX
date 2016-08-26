@@ -26,7 +26,7 @@ struct DCX_AppSetting
     uint16_t utc = 7;
 
 #ifdef LORA_SUPPORT
-    uint8_t loraGateway = LORA_DEFAULT_DEST_ADDR;
+    uint8_t loraDestAddress = LORA_DEFAULT_DEST_ADDR;
     uint8_t loraNodeAddress = LORA_NODE_ADDRESS;
     int		loraMode = LORA_LORAMODE;
     uint8_t loraPackageNumber = 0;
@@ -75,7 +75,7 @@ struct DCX_AppSetting
             utc = config["utc"];
 
 #ifdef LORA_SUPPORT
-            loraGateway = config["loraGateway"];
+            loraDestAddress = config["loraDestAddress"];
             loraNodeAddress = config["loraNodeAddress"];
             loraMode = config["loraMode"];
             loraPackageNumber = config["loraPackageNumber"];
@@ -111,7 +111,7 @@ struct DCX_AppSetting
         config["utc"] = utc;
 
 #ifdef LORA_SUPPORT
-        config["loraGateway"] = loraGateway;
+        config["loraDestAddress"] = loraDestAddress;
         config["loraNodeAddress"] = loraNodeAddress;
         config["loraMode"] = loraMode;
         config["loraPackageNumber"] = loraPackageNumber;
@@ -164,8 +164,8 @@ struct DCX_AppSetting
         }
 
 #ifdef LORA_SUPPORT
-        if (config.containsKey("loraGateway")) {
-            loraGateway = config["loraGateway"];
+        if (config.containsKey("loraDestAddress")) {
+            loraDestAddress = config["loraDestAddress"];
         }
 
         if (config.containsKey("loraNodeAddress")) {

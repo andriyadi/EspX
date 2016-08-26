@@ -49,9 +49,11 @@
 
 #define LORA_WITH_APPKEY
 #define LORA_DEFAULT_DEST_ADDR 		1
-#define LORA_LORAMODE  				9
+#define LORA_LORAMODE  				4
 #define LORA_ACK_TIMEOUT		    3000
 #define LORA_RCV_TIMEOUT		    400
+#define LORA_MSG_PREFIX             "\\#"
+
 #endif
 
 #endif //XBOARD_DCX_CONSTANTS_H

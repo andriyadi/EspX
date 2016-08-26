@@ -19,6 +19,9 @@ DCX_LoRaService::~DCX_LoRaService() {
 }
 
 void DCX_LoRaService::begin() {
+
+    messagePrefix_ = String(LORA_MSG_PREFIX);
+
     // Power ON the module
     sx1272.ON();
 
@@ -139,31 +142,52 @@ void DCX_LoRaService::onMessageAvailable(LoraMessageAvailableCallback callback) 
 }
 
 void DCX_LoRaService::publish(String topic, String payload, boolean shouldRetry, boolean withAck) {
-    String payloadStr = "T=" + topic + "&" + payload;
+    //String payloadStr = String(LORA_MSG_PREFIX) + "T=" + topic + "&" + payload;
+
+#ifdef ESP8266
+    uint16_t battMV = ESP.getVcc();
+    Serial.print(F("VBAT: "));
+    Serial.println(battMV);
+#endif
+
+    uint8_t message[110];
+    uint8_t r_size;
+    r_size = sprintf((char*)message, "%sT=%s&%s&N=%d&V=%d", messagePrefix_.c_str(), topic.c_str(), payload.c_str(), settings_.loraNodeAddress, battMV);
 
     settings_.loraRetryCount = shouldRetry? 1: 0;
 
-    sendRawMessage(payloadStr.c_str());
+    sendRawMessage(settings_.loraDestAddress, reinterpret_cast<char*>(message), withAck);
+}
+
+void DCX_LoRaService::publish(String payload, boolean shouldRetry, boolean withAck) {
+    //String payloadStr = String(LORA_MSG_PREFIX) + "T=" + topic + "&" + payload;
+
+#ifdef ESP8266
+    uint16_t battMV = ESP.getVcc();
+    Serial.print(F("VBAT: "));
+    Serial.println(battMV);
+#endif
+
+    uint8_t message[110];
+    uint8_t r_size;
+    r_size = sprintf((char*)message, "%s%s&N=%d&V=%d", messagePrefix_.c_str(), payload.c_str(), settings_.loraNodeAddress, battMV);
+
+    settings_.loraRetryCount = shouldRetry? 1: 0;
+
+    sendRawMessage(settings_.loraDestAddress, reinterpret_cast<char*>(message), withAck);
 }
 
 void DCX_LoRaService::subscribe(String topic) {
-
 }
 
-void DCX_LoRaService::publishDeviceStatus(const char *status) {
-}
-
-void DCX_LoRaService::publishDeviceReg() {
-}
-
-void DCX_LoRaService::handleAcknowledge(boolean success, const char *origMsg) {
+void DCX_LoRaService::handleAcknowledge(uint8_t dest, boolean success, const char *origMsg) {
     if (ackCallback_) {
         //if (!success && retryLastMessage) {
         if (!success && settings_.loraRetryCount > 0) {
             //retryLastMessage = false;
             settings_.loraRetryCount--;
             Serial.println("RETRYING last message");
-            doSendMessage(origMsg);
+            doSendMessage(dest, origMsg);
         }
         else {
             ackCallback_(success, String(origMsg));
@@ -171,7 +195,7 @@ void DCX_LoRaService::handleAcknowledge(boolean success, const char *origMsg) {
     }
 }
 
-void DCX_LoRaService::sendRawMessage(const char *payloadStr, boolean withAck) {
+void DCX_LoRaService::sendRawMessage(uint8_t dest, const char *payloadStr, boolean withAck) {
 
     uint8_t app_key_offset = 0;
 
@@ -202,10 +226,10 @@ void DCX_LoRaService::sendRawMessage(const char *payloadStr, boolean withAck) {
 
     int pl = r_size + app_key_offset;
 
-    doSendMessage(reinterpret_cast<char*>(message), withAck);
+    doSendMessage(dest, reinterpret_cast<char*>(message), withAck);
 }
 
-void DCX_LoRaService::doSendMessage(const char *payloadStr, boolean withAck) {
+void DCX_LoRaService::doSendMessage(uint8_t dest, const char *payloadStr, boolean withAck) {
 
     publishing = true;
 
@@ -231,9 +255,9 @@ void DCX_LoRaService::doSendMessage(const char *payloadStr, boolean withAck) {
     //e = sx1272.sendPacketTimeout(DEFAULT_DEST_ADDR, message_, pl);
 
     if (withAck) {
-        e = sx1272.sendPacketTimeoutACK(settings_.loraGateway, message_, pl, LORA_ACK_TIMEOUT);//10000);
+        e = sx1272.sendPacketTimeoutACK(dest, message_, pl, LORA_ACK_TIMEOUT);//10000);
     } else {
-        e = sx1272.sendPacketTimeout(settings_.loraGateway, message_, pl);
+        e = sx1272.sendPacketTimeout(dest, message_, pl);
     }
 
     endSend = millis();
@@ -259,14 +283,14 @@ void DCX_LoRaService::doSendMessage(const char *payloadStr, boolean withAck) {
             Serial.println(sprintf_buf);
 #endif
 
-            handleAcknowledge(true, payloadStr);
+            handleAcknowledge(dest, true, payloadStr);
         }
         else {
             if (e == 3) {
 #ifdef DEBUG_SERIAL
                 Serial.println(F("NO ACK received!"));
 #endif
-                handleAcknowledge(false, payloadStr);
+                handleAcknowledge(dest, false, payloadStr);
             }
         }
 #ifdef DEBUG_SERIAL
@@ -292,4 +316,8 @@ void DCX_LoRaService::doSendMessage(const char *payloadStr, boolean withAck) {
 #endif
 
     publishing = false;
+}
+
+void DCX_LoRaService::setMessagePrefix(String msg) {
+    messagePrefix_ = msg;
 }
