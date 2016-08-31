@@ -18,6 +18,7 @@ extern "C" {
 
 typedef std::function<void()> WifiConnectionCallback;
 typedef std::function<void(boolean)> WifiConnectedCallback;
+typedef std::function<void(WiFiDisconnectReason)> WifiDisconnectedCallback;
 typedef std::function<void(unsigned long elapsedTime)> WifiConnectingCallback;
 
 class DCX_WifiManager {
@@ -33,26 +34,35 @@ public:
 
     void onWifiConnectStarted(WifiConnectionCallback cb);
     void onWifiConnected(WifiConnectedCallback cb);
-    void onWifiDisconnected(WifiConnectionCallback cb);
+    void onWifiDisconnected(WifiDisconnectedCallback cb);
     void onWifiConnecting(WifiConnectingCallback cb);
 
     bool isWifiConnected();
 
-    void setWifiConnected(boolean connected);
+
     void setWifiConnecting();
 
 private:
     DCX_AppSetting &setting_;
 
+    void wifiDidConnected();
+    void wifiDidDisconnected(WiFiDisconnectReason reason);
+
     //volatile boolean wifiConnectRequested_ = false;
-    volatile boolean connectedToWifi_ = false;
-    volatile boolean connectingToWifi_ = false;
-    volatile unsigned long wifiConnCheckingMillis_ = 0;
+//    volatile boolean connectedToWifi_ = false;
+//    volatile boolean connectingToWifi_ = false;
+
+    boolean  smartConfigRequested_ = false;
+    byte wifiConnTrial_ = 0;
+
+    volatile unsigned long wifiConnCheckingMillis_ = 0, wifiConnectStartMillis_ = 0;
 
     WifiConnectionCallback wifiConnectStartedCallback_;
     WifiConnectedCallback wifiConnectedHandler_;
-    WifiConnectionCallback wifiDisconnectedHandler_;
+    WifiDisconnectedCallback wifiDisconnectedHandler_;
     WifiConnectingCallback wifiConnectingCallback_;
+
+    WiFiEventHandler connectedEventHandler_, disconnectedEventHandler_, gotIPEventHandler_;
 
     void tryToConnectWifi();
 };

@@ -7,7 +7,7 @@
 
 #include "Arduino.h"
 #include <NeoPixelBus.h>
-#include <NeoPixelAnimator.h>
+//#include <NeoPixelAnimator.h>
 
 #define XBOARD_NEOPIXEL_PIN 15
 
@@ -15,15 +15,16 @@ template<typename T_COLOR_FEATURE, typename T_METHOD>
 class ESPectro_Neopixel: public NeoPixelBus<T_COLOR_FEATURE, T_METHOD> {
 public:
     ESPectro_Neopixel(uint16_t countPixels, uint8_t pin);
-    ~ESPectro_Neopixel() {
-        if (myAnimator_ != NULL) {
-            if (myAnimator_->IsAnimating()) {
-                myAnimator_->StopAnimation(0);
-            }
 
-            delete myAnimator_;
-            myAnimator_ = NULL;
-        }
+    ~ESPectro_Neopixel() {
+//        if (myAnimator_ != NULL) {
+//            if (myAnimator_->IsAnimating()) {
+//                myAnimator_->StopAnimation(0);
+//            }
+//
+//            delete myAnimator_;
+//            myAnimator_ = NULL;
+//        }
     }
 
     void turnOn(typename T_COLOR_FEATURE::ColorObject colorObject) {
@@ -44,6 +45,7 @@ public:
         this->Show();
     };
 
+    /*
     void loop() {
         if (myAnimator_ != NULL && myAnimator_->IsAnimating())
         {
@@ -63,7 +65,11 @@ public:
             myAnimator_ = new NeoPixelAnimator(this->PixelCount(), NEO_MILLISECONDS);
         }
 
-        Serial.println("Animation STARTED");
+        if (myAnimator_->IsAnimating()) {
+            myAnimator_->StopAnimation(0);
+        }
+
+        //Serial.println("Animation STARTED");
 
         AnimEaseFunction easing = NeoEase::Linear;
 
@@ -85,7 +91,7 @@ public:
             mySelf->SetPixelColor(0, updatedColor);
 
             if (progress >= 0.9) {
-                Serial.println("Animation DONE");
+                //Serial.println("Animation DONE");
 
 //                if (stripBlinkCount > 0) {
 //                    animateToColor(toColor);
@@ -130,6 +136,8 @@ public:
 private:
     NeoPixelAnimator *myAnimator_ = NULL;
     uint16_t pulsingAnimationState_ = 0;
+     */
+
 };
 
 

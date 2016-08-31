@@ -9,7 +9,9 @@ IoTHubClient::IoTHubClient(const char *username, const char *userkey, const char
 
     setServer(IOTHUB_HOST, IOTHUB_PORT);
     setCredentials(username_, userkey_);
-    setKeepAlive(5);
+    setClientId(String(String(username) + "-" + String(projectName) + "001").c_str());
+
+    setKeepAlive(10);
 
 //    subscribedTopics_.reserve(10);
 //    subscribedCallbacks_.reserve(10);
@@ -18,8 +20,8 @@ IoTHubClient::IoTHubClient(const char *username, const char *userkey, const char
 //    AsyncMqttClient::onMessage(std::bind(&IoTHubClient::_onIotHubMessageUserCallback, this, _1, _2, _3, _4, _5, _6));
 //    AsyncMqttClient::onMessage(_onIotHubMessageUserCallback);
 
-    AsyncMqttClientInternals::OnMessageUserCallback cb = [=](char* topic, char* payload, uint8_t qos, size_t len, size_t index, size_t total) {
-        _onIoTHubMqttMessage(topic, payload, qos, len, index, total);
+    AsyncMqttClientInternals::OnMessageUserCallback cb = [=](char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
+        _onIoTHubMqttMessage(topic, payload, properties, len, index, total);
         //Serial.printf("Got topic %s\r\n", topic);
     };
     AsyncMqttClient::onMessage(cb);
@@ -66,7 +68,7 @@ void IoTHubClient::subscribeWithCallback(String topic, IoTHubSubscribedTopicMess
     AsyncMqttClient::subscribe(topic.c_str(), IOTHUB_DEFAULT_SUBSCRIBE_QOS);
 }
 
-void IoTHubClient::subscribeProperty(String property, IoTHubSubscribedPropertyCallback callback) {
+void IoTHubClient::subscribePropertyWithTopic(String endTopic, String property, IoTHubSubscribedPropertyCallback callback) {
 
     parseMessageAsJson_ = true;
 
@@ -74,7 +76,7 @@ void IoTHubClient::subscribeProperty(String property, IoTHubSubscribedPropertyCa
     if (subscribedProperties_.size() == 0) {
         String project = String(projectName_);
         project.toLowerCase();
-        String topic = String(username_) + "/" + project + "/control";
+        String topic = String(username_) + "/" + project + "/" + endTopic;
 
         AsyncMqttClient::subscribe(topic.c_str(), IOTHUB_DEFAULT_SUBSCRIBE_QOS);
     }
@@ -82,12 +84,30 @@ void IoTHubClient::subscribeProperty(String property, IoTHubSubscribedPropertyCa
     subscribedProperties_[property] = callback;
 }
 
+void IoTHubClient::subscribeProperty(String property, IoTHubSubscribedPropertyCallback callback) {
+
+//    parseMessageAsJson_ = true;
+//
+//    //only subscribe when no subscribed properties
+//    if (subscribedProperties_.size() == 0) {
+//        String project = String(projectName_);
+//        project.toLowerCase();
+//        String topic = String(username_) + "/" + project + "/control";
+//
+//        AsyncMqttClient::subscribe(topic.c_str(), IOTHUB_DEFAULT_SUBSCRIBE_QOS);
+//    }
+//
+//    subscribedProperties_[property] = callback;
+
+    subscribePropertyWithTopic("control", property, callback);
+}
+
 AsyncMqttClient &IoTHubClient::onMessage(AsyncMqttClientInternals::OnMessageUserCallback callback) {
     _onIotHubMessageUserCallback = callback;
     return *this;
 }
 
-void IoTHubClient::_onIoTHubMqttMessage(char* topic, char* payload, uint8_t qos, size_t len, size_t index, size_t total) {
+void IoTHubClient::_onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
 
     Serial.printf("Got topic %s\r\n", topic);
 
@@ -140,7 +160,7 @@ void IoTHubClient::_onIoTHubMqttMessage(char* topic, char* payload, uint8_t qos,
     }
 
     if (_onIotHubMessageUserCallback) {
-        _onIotHubMessageUserCallback(topic, payload, qos, len, index, total);
+        _onIotHubMessageUserCallback(topic, payload, properties, len, index, total);
     }
 
     if (parseMessageAsJson_ && subscribedProperties_.size() > 0) {

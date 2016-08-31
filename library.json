@@ -1,13 +1,13 @@
 {
   "name": "ESPectro",
-  "keywords": "iot, ESPectro, iothub.id, cloud, devboard",
+  "keywords": "iot, ESPectro, iothub.id, cloud, devboard, esp8266",
   "description": "ESP8266 extended library, especially for iothub.id client & ESPectro devboard by DycodeX",
   "authors":
   {
     "name": "Andri Yadi",
     "url": "http://www.dycodex.com"
   },
-  "version": "0.2.0",
+  "version": "0.3.0",
   "repository":
   {
     "type": "git",

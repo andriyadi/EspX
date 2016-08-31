@@ -33,6 +33,9 @@ struct DCX_AppSetting
     uint8_t loraRetryCount = 0;
 #endif
 
+    //int val
+    int16_t anIntVal = 0;
+
     boolean load()
     {
         if (!SPIFFS.begin()) {
@@ -82,6 +85,8 @@ struct DCX_AppSetting
             loraRetryCount = config["loraRetryCount"];
 #endif
 
+            anIntVal = config["anIntVal"];
+
             //delete[] jsonString;
         }
         else {
@@ -117,6 +122,8 @@ struct DCX_AppSetting
         config["loraPackageNumber"] = loraPackageNumber;
         config["loraRetryCount"] = loraRetryCount;
 #endif
+
+        config["anIntVal"] = anIntVal;
 
         //TODO: add direct file stream writing
         String rootString;
@@ -185,6 +192,9 @@ struct DCX_AppSetting
         }
 #endif
 
+        if (config.containsKey("anIntVal")) {
+            anIntVal = config["anIntVal"];
+        }
     }
 
     bool exist() { return SPIFFS.exists(APP_SETTINGS_FILE); }

@@ -4,109 +4,57 @@
 
 #include "DCX_WifiManager.h"
 
-Ticker *tickerCheckConn = NULL, *tickerSmartConfig = NULL;
-volatile byte wifiConnTrial_ = 0;
-volatile boolean smartConfigRequested_ = false;
-
-void cleanupTickerCheckConn() {
-    if (tickerCheckConn != NULL) {
-        tickerCheckConn->detach();
-
-        delete tickerCheckConn;
-        tickerCheckConn = NULL;
-    }
-}
-
-void cleanupTickerSmartConfig() {
-    if (tickerSmartConfig != NULL) {
-        tickerSmartConfig->detach();
-
-        delete tickerSmartConfig;
-        tickerSmartConfig = NULL;
-    }
-}
-
-void checkWifiConn(DCX_WifiManager *wifiMgr) {
-    bool _giveUp = false;
-
-    int timeout = !smartConfigRequested_? (30000 / (500)): (120000 / (500));
-
-    if (wifiConnTrial_ > timeout) {
-#ifdef DEBUG_SERIAL
-        Serial.println(F("\r\nWIFI connection is timeout\r\n"));
-#endif
-        _giveUp = true;
-    }
-
-    if (smartConfigRequested_) {
-        //Serial.print("x");
-        if (WiFi.smartConfigDone()){
-#ifdef DEBUG_SERIAL
-            Serial.println(F("SmartConfig Success"));
-#endif
-            wifiMgr->setWifiConnected(true);
-            cleanupTickerSmartConfig();
-
-            return;
-        }
-    }
-    else {
-        //uint8_t stat = WiFi.waitForConnectResult();
-        uint8_t stat = WiFi.status();
-
-        /*if (stat == WL_DISCONNECTED) {
-            DEBUG_SERIAL("Disconnected!\r\n");
-            _giveUp = true;
-        }
-        else */
-        if (stat == WL_NO_SSID_AVAIL) {
-            DEBUG_SERIAL("SSID is GONE!\r\n");
-            WiFi.disconnect();
-            _giveUp = true;
-        }
-        else if (stat == WL_CONNECTED) {
-
-#ifdef DEBUG_SERIAL
-            Serial.println(F("\r\nYay!!! WIFI is connected\r\n"));
-#endif
-            wifiMgr->setWifiConnected(true);
-            cleanupTickerCheckConn();
-
-            return;
-        }
-    }
-
-    if (_giveUp) {
-        if (smartConfigRequested_) {
-            WiFi.stopSmartConfig();
-            cleanupTickerSmartConfig();
-        }
-        else {
-            cleanupTickerCheckConn();
-        }
-
-        wifiMgr->setWifiConnected(false);
-
-    }
-    else {
-        DEBUG_SERIAL(".");
-        wifiConnTrial_++;
-        wifiMgr->setWifiConnecting();
-    }
-}
-
 DCX_WifiManager::DCX_WifiManager(DCX_AppSetting &setting):
         setting_(setting) {
 
 }
 
 DCX_WifiManager::~DCX_WifiManager() {
-    cleanupTickerCheckConn();
-    cleanupTickerSmartConfig();
 }
 
 void DCX_WifiManager::begin() {
+
     WiFi.mode(WIFI_STA);
+
+    DCX_WifiManager *mySelf = this;
+
+    connectedEventHandler_ = WiFi.onStationModeConnected([](const WiFiEventStationModeConnected& event) {
+#ifdef DEBUG_SERIAL
+        Serial.print("Station connected to: ");
+        Serial.println(event.ssid);
+#endif
+    });
+
+    gotIPEventHandler_ = WiFi.onStationModeGotIP([mySelf](const WiFiEventStationModeGotIP& event)
+                                                 {
+#ifdef DEBUG_SERIAL
+                                                     Serial.print("Station connected, IP: ");
+                                                     Serial.println(WiFi.localIP());
+#endif
+                                                     mySelf->wifiDidConnected();
+                                                 });
+
+    disconnectedEventHandler_ = WiFi.onStationModeDisconnected([mySelf](const WiFiEventStationModeDisconnected& event)
+                                                               {
+                                                                   if (event.reason == WIFI_DISCONNECT_REASON_ASSOC_LEAVE ||
+                                                                       event.reason == WIFI_DISCONNECT_REASON_AUTH_LEAVE) {
+                                                                       Serial.println("Station leave");
+                                                                       return;
+                                                                   }
+
+                                                                   if (event.reason == WIFI_DISCONNECT_REASON_ASSOC_LEAVE ||
+                                                                       event.reason == WIFI_DISCONNECT_REASON_AUTH_LEAVE) {
+                                                                       Serial.println("Station leave");
+                                                                       return;
+                                                                   }
+#ifdef DEBUG_SERIAL
+                                                                   Serial.println("Station disconnected");
+                                                                   Serial.println(event.reason);
+#endif
+                                                                   mySelf->wifiDidDisconnected(event.reason);
+                                                                   mySelf->startSmartConfig();
+
+                                                               });
 
     if (!setting_.exist() || !setting_.wifiConfigured || SETTING_FORCE_INIT)
     {
@@ -119,53 +67,87 @@ void DCX_WifiManager::begin() {
 
 void DCX_WifiManager::loop() {
 
-    if (connectingToWifi_ && !connectedToWifi_) {
-        Serial.print("X");
-        if (wifiConnectingCallback_) {
-            wifiConnectingCallback_(wifiConnTrial_*500);
-        }
-        return;
-    }
+//    if (connectingToWifi_ && !connectedToWifi_) {
+    if (!WiFi.isConnected()) {
+//        Serial.print("X");
 
-    if (millis() - wifiConnCheckingMillis_ > WIFI_CHECK_CONNECTION_INTERVAL && setting_.wifiConfigured) {
-        connectedToWifi_ = WiFi.isConnected();
-        wifiConnCheckingMillis_ = millis();
+        unsigned long _ellapsed = (millis() - wifiConnCheckingMillis_);
+        if (_ellapsed >= 500) {
+            wifiConnTrial_++;
+            wifiConnCheckingMillis_ = millis();
 
-        if (!connectedToWifi_) {
-            //wifiConnectRequested_ = true;
-            tryToConnectWifi();
+            if (wifiConnectingCallback_) {
+                wifiConnectingCallback_(wifiConnTrial_*500);
+            }
+
+            if (smartConfigRequested_) {
+                if (WiFi.smartConfigDone()){
+
+                    smartConfigRequested_ = false;
+//                    connectingToWifi_ = false;
+#ifdef DEBUG_SERIAL
+                    Serial.println(F("SmartConfig Success"));
+#endif
+                }
+                else {
+                    if (wifiConnTrial_ > (120000 / 500)) {
+                        smartConfigRequested_ = false;
+#ifdef DEBUG_SERIAL
+                        Serial.println(F("SmartConfig give up"));
+#endif
+                        WiFi.stopSmartConfig();
+                        if (wifiDisconnectedHandler_) {
+                            wifiDisconnectedHandler_(WIFI_DISCONNECT_REASON_UNSPECIFIED);
+                        }
+//                        connectingToWifi_ = false;
+                    }
+                }
+            }
+            delay(1);
         }
     }
 }
 
 void DCX_WifiManager::startSmartConfig() {
+    if (smartConfigRequested_) {
+        return;
+    }
 
-    DEBUG_SERIAL("DAMN, RECONFIG WIFI\n");
+    smartConfigRequested_ = true;
+
+    DEBUG_SERIAL("DAMN, RECONFIG WIFI USING SMART CONFIG\n");
 
     WiFi.disconnect();
 
-    setting_.wifiConfigured = false; //make sure
+    setting_.wifiConfigured = false; //make sure, but don't save
 
+    WiFi.stopSmartConfig(); //make sure
     bool success = WiFi.beginSmartConfig();
     if (!success) {
         DEBUG_SERIAL("DAMN, SMART CONFIG FAILED\n");
+        smartConfigRequested_ = false;
     }
     else {
-        smartConfigRequested_ = true;
+
+//        connectedToWifi_ = false;
+//        connectingToWifi_ = true;
+        //smartConfigRequested_ = true;
+
+        wifiConnCheckingMillis_ = millis();
         wifiConnTrial_ = 0;
 
-        if (tickerSmartConfig == NULL) {
-            tickerSmartConfig = new Ticker();
-        }
-
-        tickerSmartConfig->detach();
-        delay(10);
-
+//        if (tickerSmartConfig == NULL) {
+//            tickerSmartConfig = new Ticker();
+//        }
+//
+//        //tickerSmartConfig->detach();
+//        delay(10);
+//
         if (wifiConnectStartedCallback_) {
             wifiConnectStartedCallback_();
         }
-
-        tickerSmartConfig->attach(0.5, checkWifiConn, this);
+//
+//        tickerSmartConfig->attach(0.5, checkWifiConn, this);
     }
 }
 
@@ -177,7 +159,7 @@ void DCX_WifiManager::onWifiConnected(WifiConnectedCallback cb) {
     wifiConnectedHandler_ = cb;
 }
 
-void DCX_WifiManager::onWifiDisconnected(WifiConnectionCallback cb) {
+void DCX_WifiManager::onWifiDisconnected(WifiDisconnectedCallback cb) {
     wifiDisconnectedHandler_ = cb;
 }
 
@@ -187,89 +169,90 @@ void DCX_WifiManager::onWifiConnecting(WifiConnectingCallback cb) {
 
 
 void DCX_WifiManager::setWifiConnecting() {
-    if (wifiConnectingCallback_) {
-        wifiConnectingCallback_(wifiConnTrial_*500);
-    }
+//    if (wifiConnectingCallback_) {
+//        wifiConnectingCallback_(wifiConnTrial_*500);
+//    }
 }
 
-void DCX_WifiManager::setWifiConnected(boolean connected) {
+void DCX_WifiManager::wifiDidConnected() {
 
-    if (connected) {
+//    connectedToWifi_ = true;
+//    connectingToWifi_ = false;
 
-        connectedToWifi_ = true;
-        connectingToWifi_ = false;
-        smartConfigRequested_ = false;
-
-#ifdef DEBUG_SERIAL
-        WiFi.printDiag(Serial);
-#endif
-
-        boolean newConnection = (setting_.wifiConfigured == 0);
-
-        IPAddress _localIP = WiFi.localIP();
-        setting_.ipAddr = _localIP;
-        setting_.wifiConfigured = true;
-
-        static struct station_config conf;
-        wifi_station_get_config(&conf);
-        const char* ssid = reinterpret_cast<const char*>(conf.ssid);
-        const char* passphrase = reinterpret_cast<const char*>(conf.password);
+    smartConfigRequested_ = false;
 
 #ifdef DEBUG_SERIAL
-        Serial.printf("WiFi SSID: %s, Pass: %s\r\n", ssid, passphrase);
+    WiFi.printDiag(Serial);
 #endif
 
-        setting_.ssidName = String(ssid);
-        setting_.ssidPass = String(passphrase);
+    boolean newConnection = (setting_.wifiConfigured == 0);
 
-        setting_.save();
+    IPAddress _localIP = WiFi.localIP();
+    setting_.ipAddr = _localIP;
+    setting_.wifiConfigured = true;
 
-        if (wifiConnectedHandler_) {
-            wifiConnectedHandler_(newConnection);
-        }
+    static struct station_config conf;
+    wifi_station_get_config(&conf);
+    const char* ssid = reinterpret_cast<const char*>(conf.ssid);
+    const char* passphrase = reinterpret_cast<const char*>(conf.password);
+
+#ifdef DEBUG_SERIAL
+    Serial.printf("WiFi SSID: %s, Pass: %s\r\n", ssid, passphrase);
+#endif
+
+    setting_.ssidName = String(ssid);
+    setting_.ssidPass = String(passphrase);
+
+    setting_.save();
+
+    if (wifiConnectedHandler_) {
+        wifiConnectedHandler_(newConnection);
     }
-    else {
 
-        connectingToWifi_ = false;
-        connectedToWifi_ = false;
-        smartConfigRequested_ = false;
+}
 
-        if (wifiDisconnectedHandler_) {
-            wifiDisconnectedHandler_();
-        }
+void DCX_WifiManager::wifiDidDisconnected(WiFiDisconnectReason reason) {
+//    connectingToWifi_ = false;
+//    connectedToWifi_ = false;
 
-        startSmartConfig();
+    smartConfigRequested_ = false;
+
+    if (wifiDisconnectedHandler_) {
+        wifiDisconnectedHandler_(reason);
     }
+
+//    if (!smartConfigRequested_) {
+//        startSmartConfig();
+//    }
 }
 
 void DCX_WifiManager::tryToConnectWifi() {
+
+//    cleanupTickerCheckConn();
+//    cleanupTickerSmartConfig();
 
     DEBUG_SERIAL("YUHU, WIFI CONFIG READY! %s:%s\n", setting_.ssidName.c_str(), setting_.ssidPass.c_str());
     //WiFiMulti.addAP(settings_.ssidName.c_str(), settings_.ssidPass.c_str()); // Put you SSID and Password here
     //WifiStation.waitConnection(connectedDelegate_, 30, notConnectedDelegate_); // We recommend 20+ seconds at start
 
-    connectedToWifi_ = false;
-    connectingToWifi_ = true;
+//    connectedToWifi_ = false;
+//    connectingToWifi_ = true;
+
+    smartConfigRequested_ = false;
+
     wifiConnTrial_ = 0;
+    wifiConnCheckingMillis_ = millis();
 
     WiFi.begin(setting_.ssidName.c_str(), setting_.ssidPass.c_str());
-
-
-    if (tickerCheckConn == NULL) {
-        tickerCheckConn = new Ticker();
-    }
-
-    tickerCheckConn->detach();
-    delay(10);
 
     if (wifiConnectStartedCallback_) {
         wifiConnectStartedCallback_();
     }
-    tickerCheckConn->attach(0.5, checkWifiConn, this);
 }
 
 bool DCX_WifiManager::isWifiConnected() {
-    return connectedToWifi_;
+    //return connectedToWifi_;
+    return WiFi.isConnected();
 }
 
 

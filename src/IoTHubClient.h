@@ -34,6 +34,7 @@ public:
 
     void subscribeWithCallback(String topic, IoTHubSubscribedTopicMessageCallback callback);
     void subscribeProperty(String property, IoTHubSubscribedPropertyCallback callback);
+    void subscribePropertyWithTopic(String topic, String property, IoTHubSubscribedPropertyCallback callback);
 
     void publish(String topic, String payload);
     void publishData(String payload);
@@ -74,7 +75,7 @@ private:
 
     AsyncMqttClientInternals::OnMessageUserCallback _onIotHubMessageUserCallback;
 
-    void _onIoTHubMqttMessage(char* topic, char* payload, uint8_t qos, size_t len, size_t index, size_t total);
+    void _onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total);
 };
 
 
