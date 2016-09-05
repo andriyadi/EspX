@@ -17,7 +17,7 @@
 #define SETTING_DEFAULT_AP_PASS             "11223344"
 #define SETTING_FORCE_INIT                  false
 
-#define WIFI_CHECK_CONNECTION_INTERVAL      5000
+#define WIFI_CONNECTING_INTERVAL            500
 
 #define LORA_SUPPORT
 

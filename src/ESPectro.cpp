@@ -16,7 +16,7 @@ ESPectro_LED::~ESPectro_LED() {
 }
 
 void ESPectro_LED::begin() {
-    pinMode(XBOARD_LED_PIN, OUTPUT);
+    pinMode(ESPECTRO_LED_PIN, OUTPUT);
     turnOff();
 }
 
@@ -174,7 +174,7 @@ void ESPectro_Button::loop() {
 
     if (!XBoard_Button_Value_Changed) {
 
-        if (buttonState_ == Pressed && (currentMillis - lastButtonPressedMillis_ > XBOARD_BUTTON_LONG_PRESS_DURATION_MS)) {
+        if (buttonState_ == Pressed && (currentMillis - lastButtonPressedMillis_ > ESPECTRO_BUTTON_LONG_PRESS_DURATION_MS)) {
             buttonState_ = LongPressed;
             //Serial.println(F("Considered Long Pressed"));
             if (longPressedCallback_) {
@@ -186,7 +186,7 @@ void ESPectro_Button::loop() {
 
         XBoard_Button_Value_Changed = false;
 
-        if ((currentMillis - lastButtonChangedMillis_) > XBOARD_BUTTON_DEBOUNCE_DURATION_MS) {
+        if ((currentMillis - lastButtonChangedMillis_) > ESPECTRO_BUTTON_DEBOUNCE_DURATION_MS) {
             lastButtonChangedMillis_ = currentMillis;
         }
         else {
@@ -212,7 +212,7 @@ void ESPectro_Button::loop() {
                 btnUpCallback_();
             }
 
-            if (buttonState_ != LongPressed && currentMillis - lastButtonPressedMillis_ > XBOARD_BUTTON_PRESS_DURATION_MS) {
+            if (buttonState_ != LongPressed && currentMillis - lastButtonPressedMillis_ > ESPECTRO_BUTTON_PRESS_DURATION_MS) {
                 buttonState_ = Released;
                 //Serial.println(F("Considered Pressed"));
                 if (pressedCallback_) {

@@ -1,28 +1,42 @@
 //
 // Created by Andri Yadi on 8/1/16.
 // Adapted from: https://github.com/skywodd/pcf8574_arduino_library
-// NOT USED!!!!
 //
 
-#ifndef XBOARD_XBOARD_GPIOEX_H
-#define XBOARD_XBOARD_GPIOEX_H
+#ifndef XBOARD_BASE_GPIOEX_H
+#define XBOARD_BASE_GPIOEX_H
 
 #include "Arduino.h"
 #include <Wire.h>
 
-#define PCF8574_OK          0x00
-#define PCF8574_PIN_ERROR   0x81
-#define PCF8574_I2C_ERROR   0x82
+#define GPIOEX_OK          0x00
+#define GPIOEX_PIN_ERROR   0x81
+#define GPIOEX_I2C_ERROR   0x82
 
-class ESPectro_GpioEx {
+//Registers
+#define MAX7315_REG_INPUTS			0x00
+#define MAX7315_REG_BLINK0			0x01
+#define MAX7315_REG_BLINK1			0x09
+#define MAX7315_REG_PORT_CONFIG		0x03
+#define MAX7315_REG_MASTER			0x0E
+#define MAX7315_REG_CONFIG			0x0F
+#define MAX7315_REG_INT10			0x10
+#define MAX7315_REG_INT32			0x11
+#define MAX7315_REG_INT54			0x12
+#define MAX7315_REG_INT76			0x13
+
+#define ESPECTRO_BASE_GPIOEX_BUTTON_PIN     1
+#define ESPECTRO_BASE_GPIOEX_LED_PIN        2
+
+class ESPectroBase_GpioEx {
 public:
-    ESPectro_GpioEx(uint8_t address = 0x38); //atau 0x20)
-    ~ESPectro_GpioEx();
+    ESPectroBase_GpioEx(uint8_t address = 0x20);
+    ~ESPectroBase_GpioEx();
 
     /**
     * Start the I2C controller and store the PCF8574 chip address
     */
-    void begin();
+    boolean begin();
 
     int lastError();
 
@@ -94,7 +108,7 @@ public:
 
 protected:
 
-    uint8_t i2cAddress_ = 0x38;   //atau 0x20
+    uint8_t i2cAddress_ = 0x20;
     int lastError_ = 0;
 
     /** Output pins values */
@@ -120,7 +134,11 @@ protected:
      * @warning To work properly (and avoid any states conflicts) readGPIO() MUST be called before call this function !
      */
     void updateGPIO();
+
+    uint8_t writeReg(uint8_t reg, unsigned char *values, char length);
+    uint8_t writeReg(uint8_t reg, uint8_t value);
+    uint8_t readReg(uint8_t reg, uint8_t *value, uint8_t length);
 };
 
 
-#endif //XBOARD_XBOARD_GPIOEX_H
+#endif //XBOARD_BASE_GPIOEX_H

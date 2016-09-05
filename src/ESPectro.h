@@ -2,8 +2,8 @@
 // Created by Andri Yadi on 7/31/16.
 //
 
-#ifndef XBOARD_XBOARD_H
-#define XBOARD_XBOARD_H
+#ifndef XBOARD_ESPECTRO_H
+#define XBOARD_ESPECTRO_H
 
 #include "Arduino.h"
 #include "ESPectro_Constants.h"
@@ -13,7 +13,7 @@
 
 class ESPectro_LED {
 public:
-    ESPectro_LED(byte pin = XBOARD_LED_PIN, boolean activeHigh = true);
+    ESPectro_LED(byte pin = ESPECTRO_LED_PIN, boolean activeHigh = true);
     ~ESPectro_LED();
 
     void begin();
@@ -54,7 +54,7 @@ typedef std::function<void()> ButtonActionCallback;
 
 class ESPectro_Button {
 public:
-    ESPectro_Button(uint8_t pin = XBOARD_BUTTON_PIN, boolean activeHigh = false);
+    ESPectro_Button(uint8_t pin = ESPECTRO_BUTTON_PIN, boolean activeHigh = false);
     ~ESPectro_Button();
 
     void begin();
@@ -78,4 +78,4 @@ private:
     ButtonActionCallback longPressedCallback_;
 };
 
-#endif //XBOARD_XBOARD_H
+#endif //XBOARD_ESPECTRO_H

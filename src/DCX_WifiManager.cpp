@@ -72,12 +72,12 @@ void DCX_WifiManager::loop() {
 //        Serial.print("X");
 
         unsigned long _ellapsed = (millis() - wifiConnCheckingMillis_);
-        if (_ellapsed >= 500) {
+        if (_ellapsed >= WIFI_CONNECTING_INTERVAL) {
             wifiConnTrial_++;
             wifiConnCheckingMillis_ = millis();
 
             if (wifiConnectingCallback_) {
-                wifiConnectingCallback_(wifiConnTrial_*500);
+                wifiConnectingCallback_(wifiConnTrial_*WIFI_CONNECTING_INTERVAL);
             }
 
             if (smartConfigRequested_) {
@@ -90,7 +90,7 @@ void DCX_WifiManager::loop() {
 #endif
                 }
                 else {
-                    if (wifiConnTrial_ > (120000 / 500)) {
+                    if (wifiConnTrial_ > (120000 / WIFI_CONNECTING_INTERVAL)) {
                         smartConfigRequested_ = false;
 #ifdef DEBUG_SERIAL
                         Serial.println(F("SmartConfig give up"));
@@ -170,7 +170,7 @@ void DCX_WifiManager::onWifiConnecting(WifiConnectingCallback cb) {
 
 void DCX_WifiManager::setWifiConnecting() {
 //    if (wifiConnectingCallback_) {
-//        wifiConnectingCallback_(wifiConnTrial_*500);
+//        wifiConnectingCallback_(wifiConnTrial_*WIFI_CONNECTING_INTERVAL);
 //    }
 }
 
