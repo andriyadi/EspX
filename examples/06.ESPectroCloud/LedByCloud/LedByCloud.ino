@@ -16,9 +16,6 @@ IoTHubClient ioTHubClient("andri", "vByOlaA1UZyv8Iw7O9T64F55d9hH7iXZ1o1xkZVogPwV
 
 DCX_WifiManager wifiManager(AppSetting);
 
-int lastAdcLdr = 0;
-const int LED_THRESHOLD = 500;
-
 void onMqttMessage(char* topic, char* payload, uint8_t qos, size_t len, size_t index, size_t total) {
     Serial.println("** Publish received **");
     Serial.print("  topic: ");
@@ -84,8 +81,7 @@ void setup() {
   while(!Serial);
   
   DEBUG_SERIAL("\r\nInitializing...\r\n\r\n");
-  //WiFi.forceSleepBegin();
-
+  
   AppSetting.load();
   AppSetting.debugPrintTo(Serial);
 
