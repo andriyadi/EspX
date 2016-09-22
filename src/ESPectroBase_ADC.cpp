@@ -52,7 +52,7 @@ uint16_t ESPectroBase_ADC::read(uint8_t channel) {
     uint8_t configurationByte = ( (channel<<1) & B00001110) | B01100001;
     configuration(configurationByte);
 
-    Wire.requestFrom(i2cAddress_, 2, false);
+    Wire.requestFrom(i2cAddress_, (size_t) 2, false);
 
     if(Wire.available()==2) // the conversion consists of two bytes per channel
     {
@@ -73,7 +73,7 @@ void ESPectroBase_ADC::scan(uint16_t *buffer) {
     uint8_t configurationByte = B00001111;
     configuration(configurationByte);
 
-    Wire.requestFrom(i2cAddress_, 16, false); // 2 bytes per channel. There are 8 channels.
+    Wire.requestFrom(i2cAddress_, (size_t)16, false); // 2 bytes per channel. There are 8 channels.
 
     if(Wire.available()==16)
     {

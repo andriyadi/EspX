@@ -26,6 +26,7 @@ ESPectro_Neopixel_DMA       KEYWORD1
 # Constants (LITERAL1)
 ################################################################################
 
+BUTTON_BUILTIN                  LITERAL1
 ESPECTRO_LED_PIN		        LITERAL1
 ESPECTRO_NEOPIXEL_PIN		    LITERAL1
 ESPECTRO_BUTTON_PIN		        LITERAL1
