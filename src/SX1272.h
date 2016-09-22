@@ -47,7 +47,7 @@
 //#define W_NET_KEY
 //#define W_INITIALIZATION
 #if defined(ESP8266)
-#define SX1272_RST  0
+#define SX1272_RST  0//16//0
 #else
 #define SX1272_RST  3
 #endif
@@ -56,7 +56,7 @@
 #define SX1272_SS 10
 #else
 #if defined(ESP8266)
-#define SX1272_SS 16
+#define SX1272_SS 16//15//2//16
 #else
 #define SX1272_SS 2
 #endif

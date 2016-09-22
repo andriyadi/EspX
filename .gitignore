@@ -1,6 +1,5 @@
 .pioenvs
 CMakeListsPrivate.txt
-examples/
 src/ESPectro_Sample.cpp
 .DS_Store
 lib/SFE_BMP180/

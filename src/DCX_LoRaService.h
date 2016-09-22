@@ -12,7 +12,7 @@
 #include <functional>
 
 typedef std::function<void()> LoraClientConnectedCallback;
-typedef std::function<void(bool, String)> LoraMessageAcknowledgedCallback;
+typedef std::function<void(bool, String, uint8_t)> LoraMessageAcknowledgedCallback;
 typedef std::function<void(String)> LoraMessageAvailableCallback;
 
 class DCX_LoRaService {
@@ -31,7 +31,7 @@ public:
     void setMessagePrefix(String msg);
 
     //convenience
-    void sendRawMessage(uint8_t dest, const char *msg, boolean withAck = true);
+    void sendRawMessage(uint8_t dest, uint8_t *payload, uint16_t pl, boolean withAck = true);
 
     boolean isPublishing() {
         return publishing;
@@ -39,15 +39,16 @@ public:
 
 private:
     DCX_AppSetting &settings_;
-    uint8_t message_[110];
+    uint8_t message_[170];
     String messagePrefix_;
 
     unsigned long lastTransmissionTime_ = 0;
     volatile boolean networkReady = false, publishing = false;
 
-    void doSendMessage(uint8_t dest, const char *msg, boolean withAck = true);
+    void doSendMessage(uint8_t dest, uint8_t *payload, uint16_t pl, boolean withAck = true);
 
-    void handleAcknowledge(uint8_t dest, boolean success, const char *origMsg);
+    //void handleAcknowledge(uint8_t dest, boolean success, const char *origMsg, uint8_t packetNum);
+    void handleAcknowledge(uint8_t dest, boolean success, uint8_t *origPayload, uint16_t origPayloadLength, uint8_t packetNum);
 
     LoraClientConnectedCallback connectedCallback_;
     LoraMessageAvailableCallback msgAvailableCallback_;

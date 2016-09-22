@@ -144,68 +144,128 @@ void DCX_LoRaService::onMessageAvailable(LoraMessageAvailableCallback callback) 
 void DCX_LoRaService::publish(String topic, String payload, boolean shouldRetry, boolean withAck) {
     //String payloadStr = String(LORA_MSG_PREFIX) + "T=" + topic + "&" + payload;
 
-#ifdef ESP8266
-    uint16_t battMV = ESP.getVcc();
-    Serial.print(F("VBAT: "));
-    Serial.println(battMV);
-#endif
+//#ifdef ESP8266
+//    uint16_t battMV = ESP.getVcc();
+//    Serial.print(F("VBAT: "));
+//    Serial.println(battMV);
+//#endif
 
-    uint8_t message[110];
-    uint8_t r_size;
-    r_size = sprintf((char*)message, "%sT=%s&%s&N=%d&V=%d", messagePrefix_.c_str(), topic.c_str(), payload.c_str(), settings_.loraNodeAddress, battMV);
+//    uint8_t message[160];
+//    uint8_t r_size;
+//    //r_size = sprintf((char*)message, "%sT=%s&%s&N=%d&V=%d", messagePrefix_.c_str(), topic.c_str(), payload.c_str(), settings_.loraNodeAddress, battMV);
+//    r_size = sprintf((char*)message, "%sT=%s&%s&N=%d", messagePrefix_.c_str(), topic.c_str(), payload.c_str(), settings_.loraNodeAddress);
+//
+//    settings_.loraRetryCount = shouldRetry? 1: 0;
+//
+//    sendRawMessage(settings_.loraDestAddress, reinterpret_cast<char*>(message), withAck);
 
-    settings_.loraRetryCount = shouldRetry? 1: 0;
+    String sentPayload = messagePrefix_ + "T=" + topic + "&" + payload + "&N=" + String(settings_.loraNodeAddress);
+    uint8_t buffer[sentPayload.length() + 1];
 
-    sendRawMessage(settings_.loraDestAddress, reinterpret_cast<char*>(message), withAck);
+    sentPayload.getBytes(buffer, sentPayload.length()+1);
+    sendRawMessage(settings_.loraDestAddress, buffer, sentPayload.length(), withAck);
 }
 
 void DCX_LoRaService::publish(String payload, boolean shouldRetry, boolean withAck) {
     //String payloadStr = String(LORA_MSG_PREFIX) + "T=" + topic + "&" + payload;
 
-#ifdef ESP8266
-    uint16_t battMV = ESP.getVcc();
-    Serial.print(F("VBAT: "));
-    Serial.println(battMV);
-#endif
+//#ifdef ESP8266
+//    uint16_t battMV = ESP.getVcc();
+//    Serial.print(F("VBAT: "));
+//    Serial.println(battMV);
+//#endif
 
-    uint8_t message[110];
-    uint8_t r_size;
-    r_size = sprintf((char*)message, "%s%s&N=%d&V=%d", messagePrefix_.c_str(), payload.c_str(), settings_.loraNodeAddress, battMV);
+//    uint8_t message[160];
+//    uint8_t r_size;
+//    //r_size = sprintf((char*)message, "%s%s&N=%d&V=%d", messagePrefix_.c_str(), payload.c_str(), settings_.loraNodeAddress, battMV);
+//    r_size = sprintf((char*)message, "%s%s&N=%d", messagePrefix_.c_str(), payload.c_str(), settings_.loraNodeAddress);
+//
+//    settings_.loraRetryCount = shouldRetry? 1: 0;
+//
+//    sendRawMessage(settings_.loraDestAddress, reinterpret_cast<char*>(message), withAck);
 
-    settings_.loraRetryCount = shouldRetry? 1: 0;
+    String sentPayload = messagePrefix_ + payload + "&N=" + String(settings_.loraNodeAddress);
+    uint8_t buffer[sentPayload.length() + 1];
 
-    sendRawMessage(settings_.loraDestAddress, reinterpret_cast<char*>(message), withAck);
+    sentPayload.getBytes(buffer, sentPayload.length()+1);
+    sendRawMessage(settings_.loraDestAddress, buffer, sentPayload.length(), withAck);
 }
 
 void DCX_LoRaService::subscribe(String topic) {
 }
 
-void DCX_LoRaService::handleAcknowledge(uint8_t dest, boolean success, const char *origMsg) {
+//void DCX_LoRaService::handleAcknowledge(uint8_t dest, boolean success, const char *origMsg, uint8_t packetNum) {
+void DCX_LoRaService::handleAcknowledge(uint8_t dest, boolean success, uint8_t *origPayload, uint16_t origPayloadLength, uint8_t packetNum) {
+
     if (ackCallback_) {
         //if (!success && retryLastMessage) {
         if (!success && settings_.loraRetryCount > 0) {
             //retryLastMessage = false;
             settings_.loraRetryCount--;
             Serial.println("RETRYING last message");
-            doSendMessage(dest, origMsg);
+            //doSendMessage(dest, origMsg);
+            doSendMessage(dest, origPayload, origPayloadLength);
         }
         else {
-            ackCallback_(success, String(origMsg));
+
+#ifdef LORA_WITH_APPKEY
+            String origMsg = String((char*)(origPayload + sizeof(my_appKey)));
+#else
+            String origMsg = String((char*) message);
+#endif
+
+            ackCallback_(success, origMsg, packetNum);
         }
     }
 }
 
-void DCX_LoRaService::sendRawMessage(uint8_t dest, const char *payloadStr, boolean withAck) {
+//void DCX_LoRaService::sendRawMessage(uint8_t dest, const char *payloadStr, boolean withAck) {
+void DCX_LoRaService::sendRawMessage(uint8_t dest, uint8_t *payload, uint16_t pl, boolean withAck) {
+
+//    uint8_t app_key_offset = 0;
+//
+//    uint8_t message[170];
+//
+//#ifdef LORA_WITH_APPKEY
+//    //TODO: APP_KEY on setting
+//    app_key_offset = sizeof(my_appKey);
+//	// set the app key in the payload
+//	memcpy(message, my_appKey, app_key_offset);
+//#endif
+//
+////#ifdef WITH_AES
+////    // leave room for the real payload length byte
+////	app_key_offset++;
+////#endif
+//
+//    int r_size;
+//    r_size = sprintf((char*) message + app_key_offset, "%s", payloadStr);
+//
+//#ifdef DEBUG_SERIAL
+//    Serial.print(F("Sending "));
+//    Serial.println((char*) (message + app_key_offset));
+//
+//    Serial.print(F("Real payload size is "));
+//    Serial.println(r_size);
+//#endif
+//
+//    int pl = r_size + app_key_offset;
+//
+//    doSendMessage(dest, reinterpret_cast<char*>(message), withAck);
 
     uint8_t app_key_offset = 0;
 
-    uint8_t message[110];
-
 #ifdef LORA_WITH_APPKEY
+
+    uint8_t message[pl+sizeof(my_appKey)];
+
     //TODO: APP_KEY on setting
     app_key_offset = sizeof(my_appKey);
-	// set the app key in the payload
-	memcpy(message, my_appKey, app_key_offset);
+    // set the app key in the payload
+    memcpy(message, my_appKey, app_key_offset);
+#else
+    uint8_t message[pl];
+
 #endif
 
 //#ifdef WITH_AES
@@ -213,32 +273,36 @@ void DCX_LoRaService::sendRawMessage(uint8_t dest, const char *payloadStr, boole
 //	app_key_offset++;
 //#endif
 
-    int r_size;
-    r_size = sprintf((char*) message + app_key_offset, "%s", payloadStr);
+    memcpy(message + app_key_offset, payload, pl);
 
 #ifdef DEBUG_SERIAL
     Serial.print(F("Sending "));
+#ifdef LORA_WITH_APPKEY
     Serial.println((char*) (message + app_key_offset));
-
-    Serial.print(F("Real payload size is "));
-    Serial.println(r_size);
+#else
+    Serial.println((char*) message);
 #endif
 
-    int pl = r_size + app_key_offset;
+    Serial.print(F("Real payload size is "));
+    Serial.println(pl);
+#endif
 
-    doSendMessage(dest, reinterpret_cast<char*>(message), withAck);
+    int allPayloadLength = pl + app_key_offset;
+
+    doSendMessage(dest, message, allPayloadLength, withAck);
 }
 
-void DCX_LoRaService::doSendMessage(uint8_t dest, const char *payloadStr, boolean withAck) {
+void DCX_LoRaService::doSendMessage(uint8_t dest, uint8_t *payload, uint16_t payloadLen, boolean withAck) {
 
     publishing = true;
 
-#ifdef DEBUG_SERIAL
-    Serial.println(payloadStr);
-#endif
+//#ifdef DEBUG_SERIAL
+//    Serial.print(F("Raw: "));
+//    Serial.println(reinterpret_cast<char*>(payload));
+//#endif
 
-    int pl;
-    pl = sprintf((char*)message_, "%s", payloadStr);
+//    int pl;
+//    pl = sprintf((char*)message_, "%s", payloadStr);
 
     long startSend;
     long endSend;
@@ -255,9 +319,11 @@ void DCX_LoRaService::doSendMessage(uint8_t dest, const char *payloadStr, boolea
     //e = sx1272.sendPacketTimeout(DEFAULT_DEST_ADDR, message_, pl);
 
     if (withAck) {
-        e = sx1272.sendPacketTimeoutACK(dest, message_, pl, LORA_ACK_TIMEOUT);//10000);
+        //e = sx1272.sendPacketTimeoutACK(dest, message_, pl, LORA_ACK_TIMEOUT);//10000);
+        e = sx1272.sendPacketTimeoutACK(dest, payload, payloadLen, LORA_ACK_TIMEOUT);//10000);
     } else {
-        e = sx1272.sendPacketTimeout(dest, message_, pl);
+        //e = sx1272.sendPacketTimeout(dest, message_, pl);
+        e = sx1272.sendPacketTimeout(dest, payload, payloadLen);
     }
 
     endSend = millis();
@@ -283,14 +349,16 @@ void DCX_LoRaService::doSendMessage(uint8_t dest, const char *payloadStr, boolea
             Serial.println(sprintf_buf);
 #endif
 
-            handleAcknowledge(dest, true, payloadStr);
+            //handleAcknowledge(dest, true, payloadStr, sx1272._packetNumber);
+            handleAcknowledge(dest, true, payload, payloadLen, sx1272._packetNumber);
         }
         else {
             if (e == 3) {
 #ifdef DEBUG_SERIAL
                 Serial.println(F("NO ACK received!"));
 #endif
-                handleAcknowledge(dest, false, payloadStr);
+                //handleAcknowledge(dest, false, payloadStr, sx1272._packetNumber);
+                handleAcknowledge(dest, false, payload, payloadLen, sx1272._packetNumber);
             }
         }
 #ifdef DEBUG_SERIAL

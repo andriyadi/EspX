@@ -9,7 +9,7 @@
 #include <NeoPixelBus.h>
 //#include <NeoPixelAnimator.h>
 
-#define XBOARD_NEOPIXEL_PIN 15
+#define ESPECTRO_NEOPIXEL_PIN 15
 
 template<typename T_COLOR_FEATURE, typename T_METHOD>
 class ESPectro_Neopixel: public NeoPixelBus<T_COLOR_FEATURE, T_METHOD> {
@@ -143,7 +143,7 @@ private:
 
 class ESPectro_Neopixel_Default : public ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266BitBang800KbpsMethod> {
 public:
-    ESPectro_Neopixel_Default(uint16_t countPixels = 1, uint8_t pin = XBOARD_NEOPIXEL_PIN);
+    ESPectro_Neopixel_Default(uint16_t countPixels = 1, uint8_t pin = ESPECTRO_NEOPIXEL_PIN);
     ~ESPectro_Neopixel_Default();
 };
 
