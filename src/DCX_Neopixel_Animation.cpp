@@ -97,7 +97,7 @@ void DCX_Neopixel_PulseAnimation::start() {
         RgbColor updatedColor = RgbColor::LinearBlend(original, target, progress);
         mySelf->neopixel_.SetPixelColor(0, updatedColor);
 
-        if (progress >= 0.9) {
+        if (progress >= 0.9999) {
             //Serial.println("Animation DONE");
 
 //                if (stripBlinkCount > 0) {
@@ -122,6 +122,10 @@ void DCX_Neopixel_PulseAnimation::start() {
 }
 
 void DCX_Neopixel_PulseAnimation::end() {
+
+    if (animator_ == NULL) {
+        return;
+    }
 
     DCX_Neopixel_Animation::end();
 
