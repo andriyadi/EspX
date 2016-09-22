@@ -12,7 +12,7 @@ ESPectroBase_ADC::~ESPectroBase_ADC() {
 
 }
 
-void ESPectroBase_ADC::begin(uint8_t sda, uint8_t scl, uint8_t vRef) {
+void ESPectroBase_ADC::begin(int sda, int scl, uint8_t vRef) {
     Wire.begin(sda,scl);
 }
 

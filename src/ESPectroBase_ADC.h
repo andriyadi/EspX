@@ -18,7 +18,7 @@ public:
     ESPectroBase_ADC(uint8_t addr = ADDRESS);
     ~ESPectroBase_ADC();
 
-    void begin(uint8_t sda, uint8_t scl, uint8_t vRef = NULL);
+    void begin(int sda, int scl, uint8_t vRef = REF_VDD);
     void begin(uint8_t vRef = REF_VDD);
     void setup(uint8_t data);
     void configuration(uint8_t data);

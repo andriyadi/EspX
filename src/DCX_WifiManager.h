@@ -27,6 +27,7 @@ public:
     ~DCX_WifiManager();
 
     void begin();
+    void begin(const char* ssid, const char *passphrase);
     void loop();
 
     //void setConnectedDelegate(ConnectionDelegate connectedDelegate);

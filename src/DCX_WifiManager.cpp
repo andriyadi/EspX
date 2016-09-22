@@ -65,6 +65,19 @@ void DCX_WifiManager::begin() {
     }
 }
 
+void DCX_WifiManager::begin(const char *ssid, const char *passphrase) {
+    setting_.wifiConfigured = true;
+
+#ifdef DEBUG_SERIAL
+    Serial.printf("WiFi SSID: %s, Pass: %s\r\n", ssid, passphrase);
+#endif
+
+    setting_.ssidName = String(ssid);
+    setting_.ssidPass = String(passphrase);
+
+    begin();
+}
+
 void DCX_WifiManager::loop() {
 
 //    if (connectingToWifi_ && !connectedToWifi_) {
@@ -254,5 +267,6 @@ bool DCX_WifiManager::isWifiConnected() {
     //return connectedToWifi_;
     return WiFi.isConnected();
 }
+
 
 
