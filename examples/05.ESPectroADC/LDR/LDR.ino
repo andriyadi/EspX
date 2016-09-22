@@ -6,11 +6,14 @@
   by Andri Yadi
 */
 
+#include <ESPectro.h>
 #include <ESPectroBase.h>
 
+ESPectro board;
 ESPectroBase base;
 
-int lastAdcPot = 0;
+int lastAdcLdr = 0;
+const int LED_THRESHOLD = 500;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -23,10 +26,17 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-  int pot = base.analogRead(ESPECTRO_BASE_ADC_POT_CHANNEL);
-  if (pot != -1 && abs(pot - lastAdcPot) > 10) {
-      lastAdcPot = pot;
-      Serial.printf("Pot value: %d\r\n", pot);
+  int ldr = base.analogRead(ESPECTRO_BASE_ADC_LDR_CHANNEL);
+  if (ldr != -1 && abs(ldr - lastAdcLdr) > 10) {
+      lastAdcLdr = ldr;
+      Serial.printf("Pot value: %d\r\n", ldr);
+
+      if (ldr < LED_THRESHOLD) {
+        board.turnOnLED();
+      }
+      else {
+        board.turnOffLED();
+      }
   }
   
   delay(500);
