@@ -17,14 +17,8 @@
   "platforms": "espressif8266",
   "dependencies": [
     {
-      "name": "Json",
+      "name": "ArduinoJson",
       "authors": "Benoit Blanchon",
-      "frameworks": "arduino",
-      "platforms": "espressif8266"
-    },
-    {
-      "name": "AsyncMqttClient",
-      "authors": "Marvin Roger",
       "frameworks": "arduino",
       "platforms": "espressif8266"
     },
@@ -33,6 +27,10 @@
       "authors": "Michael Miller",
       "frameworks": "arduino",
       "platforms": "espressif8266"
+    },
+    {
+      "name": "AsyncMqttClient",
+      "authors": "Marvin Roger"
     }
   ]
 }
