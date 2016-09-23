@@ -19,12 +19,13 @@ public:
     ESPectroBase_GpioEx(uint8_t address = ESPECTRO_BASE_GPIOEX_ADDRESS);
     ~ESPectroBase_GpioEx();
 
-    byte begin();
+    //byte begin();
+    byte begin(byte address = ESPECTRO_BASE_GPIOEX_ADDRESS, byte resetPin = 0xFF);
     void turnOnLED();
     void turnOffLED();
     void blinkLED(unsigned long tOn, unsigned long tOff, byte onIntensity = 255, byte offIntensity = 0);
 private:
-    byte i2cDeviceAddress_;
+    //byte i2cDeviceAddress_;
 };
 
 
