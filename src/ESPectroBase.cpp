@@ -73,3 +73,7 @@ double ESPectroBase::estimateAltitude(double P, double P0) {
 
     return bmp280_->altitude(P,P0);
 }
+
+ESPectroBase_ADC *ESPectroBase::getADCPtr() {
+    return adc_;
+}

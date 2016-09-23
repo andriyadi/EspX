@@ -16,6 +16,7 @@ public:
 
     void beginADC();
     int analogRead(uint8_t channel);
+    ESPectroBase_ADC *getADCPtr();
 
     char beginTemperaturePressureSensor();
     char readTemperatureAndPressure(double &T, double &P);
