@@ -1,6 +1,6 @@
 /*
-  Blink on-board Neopixel RGB LED using ESPectro library
-  Turns on-board Neopixel RGB LED on for one second, then off for one second, repeatedly.
+  Getting started with on-board ADC on ESPectro Base.
+  This sketch demoes how to read analog value from on-board potentiometer
 
   Created by 22 Sep 2016
   by Andri Yadi

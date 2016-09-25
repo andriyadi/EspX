@@ -1,4 +1,5 @@
 .pioenvs
+.piolibdeps
 CMakeListsPrivate.txt
 src/ESPectro_Sample.cpp
 .DS_Store

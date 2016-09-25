@@ -1,6 +1,5 @@
 /*
-  Blink on-board Neopixel RGB LED using ESPectro library
-  Turns on-board Neopixel RGB LED on for one second, then off for one second, repeatedly.
+  Connecting to WiFi with an easy WifiManager class.
 
   Created by 22 Sep 2016
   by Andri Yadi

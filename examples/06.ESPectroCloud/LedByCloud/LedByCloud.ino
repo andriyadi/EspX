@@ -1,6 +1,6 @@
 /*
-  Blink on-board Neopixel RGB LED using ESPectro library
-  Turns on-board Neopixel RGB LED on for one second, then off for one second, repeatedly.
+  Demoing how easy to access cloud (Makestro Cloud in this case) using provided library.
+  This sketch demoes how to connect to WiFi, connect to the Cloud, then turning on/off on-board LED from the Cloud, like a boss.
 
   Created by 22 Sep 2016
   by Andri Yadi
