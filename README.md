@@ -32,7 +32,7 @@ platformio lib install 369
 
 
 ##Arduino IDE
-Development with Arduino IDE is still supported. Please make sure that you already add support ESP8266 boards via Boards Manager by following the guide [here](https://github.com/esp8266/Arduino/blob/master/README.md).
+Development with Arduino IDE is still supported. Please install the latest [Arduino IDE](http://www.arduino.cc/en/main/software) and make sure that you already add support ESP8266 boards via Boards Manager by following the guide [here](https://github.com/esp8266/Arduino/blob/master/README.md).
 Then, download this repo and unzip it. Put unzipped folder to `libraries` folder of your Arduino IDE (depends on your OS).
 
 We have submitted the necessary files to ESP8266 Arduino project so ESPectro is supported by Arduino IDE out of the box. 
@@ -42,7 +42,9 @@ But for now, please follow these steps:
 * Copy and overwrite `boards.txt` file to `[root_folder]/Arduino15/packages/esp8266/hardware/esp8266/[version]`
 * Copy and overwrite `variants` folder to the same folder as above
 
-Notes: `[root_folder]` depends on your OS. For Windows 7/8/10, it should be on `C:\Users\[username]\AppData\Local`. On macOS it resides on: `/Users/[username]/Library`.
+Notes: 
+`[root_folder]` depends on your OS. For Windows 7/8/10, it should be on `C:\Users\[username]\AppData\Local`. On macOS it resides on: `/Users/[username]/Library`.
+`[version]` depends on installed ESP8266 Arduino framework.
 
 
 Then, please install following libraries:
