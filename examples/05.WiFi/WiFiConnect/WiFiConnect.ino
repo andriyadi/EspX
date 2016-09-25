@@ -15,42 +15,46 @@ DCX_WifiManager wifiManager(AppSetting);
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-  Serial.begin(115200);
-  
-  //Wait Serial to be ready
-  while(!Serial);
-  
-  DEBUG_SERIAL("\r\nInitializing...\r\n\r\n");
-  
-  AppSetting.load();
-  AppSetting.debugPrintTo(Serial);
+    Serial.begin(115200);
 
-  wifiManager.onWifiConnectStarted([]() {
-      DEBUG_SERIAL("WIFI CONNECTING STARTED\r\n");
-      board.turnOnLED();
-  });
+    //Wait Serial to be ready
+    while (!Serial);
 
-  wifiManager.onWifiConnected([](boolean newConn) {
-      DEBUG_SERIAL("WIFI CONNECTED\r\n");
+    DEBUG_SERIAL("\r\nInitializing...\r\n\r\n");
 
-      board.turnOffLED();
-  });
+    AppSetting.load();
+    AppSetting.debugPrintTo(Serial);
 
-  wifiManager.onWifiConnecting([](unsigned long elapsed) {
-      //DEBUG_SERIAL("%d\r\n", elapsed);
-      board.toggleLED();
-  });
+    wifiManager.onWifiConnectStarted([]() {
+        DEBUG_SERIAL("WIFI CONNECTING STARTED\r\n");
+        board.turnOnLED();
+    });
 
-  wifiManager.onWifiDisconnected([](WiFiDisconnectReason reason) {
-      DEBUG_SERIAL("WIFI GIVE UP\r\n");
-      board.turnOffLED();
-  });
+    wifiManager.onWifiConnected([](boolean newConn) {
+        DEBUG_SERIAL("WIFI CONNECTED\r\n");
 
-//wifiManager.begin();
-  wifiManager.begin("DyWare-AP4", "p@ssw0rd");
+        board.turnOffLED();
+    });
+
+    wifiManager.onWifiConnecting([](unsigned long elapsed) {
+        //DEBUG_SERIAL("%d\r\n", elapsed);
+        board.toggleLED();
+    });
+
+    wifiManager.onWifiDisconnected([](WiFiDisconnectReason reason) {
+        DEBUG_SERIAL("WIFI GIVE UP\r\n");
+        board.turnOffLED();
+    });
+
+    wifiManager.begin("your-ssid-name", "your-ssid-password");
+
+    //Alternatively, you can just begin and use ESP8266 Smart Config iOS/Android app to configure WiFi
+    //I recommend to use this Android app: https://play.google.com/store/apps/details?id=com.cmmakerclub.iot.esptouch
+    //wifiManager.begin();
+
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  wifiManager.loop();
+    wifiManager.loop();
 }

@@ -9,6 +9,7 @@
 #include "DCX_Constants.h"
 #include "SX1272.h"
 #include "DCX_AppSetting.h"
+#include <SPI.h>
 #include <functional>
 
 typedef std::function<void()> LoraClientConnectedCallback;
