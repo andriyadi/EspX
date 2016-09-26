@@ -23,17 +23,27 @@ It works on the popular host OS: Mac OS X, Windows, Linux 32/64, Linux ARM (like
 * [Integration with other IDE](http://docs.platformio.org/en/stable/ide.html) - Atom, CLion, Eclipse, Emacs, NetBeans, Qt Creator, Sublime Text, VIM and Visual Studio
 * ESP8266 [Project Examples](http://docs.platformio.org/en/stable/platforms/espressif.html#examples)
 
+
+####PlatformIO IDE
+To get started fast with PlatformIO, we recommend you to install PlatformIO IDE from [here](http://platformio.org/platformio-ide).
+
 ####ESPectro board support
-Make sure ESPectro board is already listed when you type on Terminal/Command Prompt:
+Make sure ESPectro board is already listed when you type on Terminal/Command Prompt or from the Terminal inside PlatformIO IDE:
 
 ```
 pio boards --installed
 ```
 
-If it's for unknown cosmic reason it's not there, please install `development` version of `espressif8266` platform by typing on terminal:
+If for some unknown cosmic reasons the board is not listed there, please install `development` version of `espressif8266` platform by typing on terminal:
 
 ```
 pio platform install https://github.com/platformio/platform-espressif8266/archive/develop.zip
+```
+
+Then try to list boards again, you should see:
+
+```
+espectro                       ESP8266        80Mhz     4096kB  80kB   ESPrectro Core
 ```
 
 ####Installing Library
