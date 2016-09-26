@@ -2,9 +2,9 @@
 // Created by Andri Yadi on 7/30/16.
 //
 
-#include "IoTHubClient.h"
+#include "MakestroCloudClient.h"
 
-IoTHubClient::IoTHubClient(const char *username, const char *userkey, const char* projectName):
+MakestroCloudClient::MakestroCloudClient(const char *username, const char *userkey, const char* projectName):
         username_(username), userkey_(userkey), projectName_(projectName), AsyncMqttClient() {
 
     setServer(IOTHUB_HOST, IOTHUB_PORT);
@@ -17,8 +17,8 @@ IoTHubClient::IoTHubClient(const char *username, const char *userkey, const char
 //    subscribedCallbacks_.reserve(10);
 
 //    using namespace std::placeholders;
-//    AsyncMqttClient::onMessage(std::bind(&IoTHubClient::_onIotHubMessageUserCallback, this, _1, _2, _3, _4, _5, _6));
-//    AsyncMqttClient::onMessage(_onIotHubMessageUserCallback);
+//    AsyncMqttClient::onMessage(std::bind(&MakestroCloudClient::_onMakestroCloudMessageUserCallback, this, _1, _2, _3, _4, _5, _6));
+//    AsyncMqttClient::onMessage(_onMakestroCloudMessageUserCallback);
 
     AsyncMqttClientInternals::OnMessageUserCallback cb = [=](char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
         _onIoTHubMqttMessage(topic, payload, properties, len, index, total);
@@ -27,15 +27,15 @@ IoTHubClient::IoTHubClient(const char *username, const char *userkey, const char
     AsyncMqttClient::onMessage(cb);
 }
 
-IoTHubClient::IoTHubClient() {
+MakestroCloudClient::MakestroCloudClient() {
 
 }
 
-IoTHubClient::~IoTHubClient() {
+MakestroCloudClient::~MakestroCloudClient() {
 
 }
 
-void IoTHubClient::publish(String topic, String payload) {
+void MakestroCloudClient::publish(String topic, String payload) {
     if (username_ != NULL && !topic.startsWith(String(username_))) {
         String project = String(projectName_);
         project.toLowerCase();
@@ -45,11 +45,11 @@ void IoTHubClient::publish(String topic, String payload) {
     AsyncMqttClient::publish(topic.c_str(), IOTHUB_DEFAULT_PUBLISH_QOS, true, payload.c_str(), payload.length());
 }
 
-void IoTHubClient::publishData(String payload) {
+void MakestroCloudClient::publishData(String payload) {
     publish("data", payload);
 }
 
-void IoTHubClient::subscribeWithCallback(String topic, IoTHubSubscribedTopicMessageCallback callback) {
+void MakestroCloudClient::subscribeWithCallback(String topic, MakestroCloudSubscribedTopicMessageCallback callback) {
     if (username_ != NULL && !topic.startsWith(String(username_))) {
         String project = String(projectName_);
         project.toLowerCase();
@@ -68,7 +68,7 @@ void IoTHubClient::subscribeWithCallback(String topic, IoTHubSubscribedTopicMess
     AsyncMqttClient::subscribe(topic.c_str(), IOTHUB_DEFAULT_SUBSCRIBE_QOS);
 }
 
-void IoTHubClient::subscribePropertyWithTopic(String endTopic, String property, IoTHubSubscribedPropertyCallback callback) {
+void MakestroCloudClient::subscribePropertyWithTopic(String endTopic, String property, MakestroCloudSubscribedPropertyCallback callback) {
 
     parseMessageAsJson_ = true;
 
@@ -84,7 +84,7 @@ void IoTHubClient::subscribePropertyWithTopic(String endTopic, String property, 
     subscribedProperties_[property] = callback;
 }
 
-void IoTHubClient::subscribeProperty(String property, IoTHubSubscribedPropertyCallback callback) {
+void MakestroCloudClient::subscribeProperty(String property, MakestroCloudSubscribedPropertyCallback callback) {
 
 //    parseMessageAsJson_ = true;
 //
@@ -102,12 +102,12 @@ void IoTHubClient::subscribeProperty(String property, IoTHubSubscribedPropertyCa
     subscribePropertyWithTopic("control", property, callback);
 }
 
-AsyncMqttClient &IoTHubClient::onMessage(AsyncMqttClientInternals::OnMessageUserCallback callback) {
-    _onIotHubMessageUserCallback = callback;
+AsyncMqttClient &MakestroCloudClient::onMessage(AsyncMqttClientInternals::OnMessageUserCallback callback) {
+    _onMakestroCloudMessageUserCallback = callback;
     return *this;
 }
 
-void IoTHubClient::_onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
+void MakestroCloudClient::_onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
 
     Serial.printf("Got topic %s\r\n", topic);
 
@@ -129,7 +129,7 @@ void IoTHubClient::_onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttCli
 //        Serial.printf("Found topic at idx: %d\r\n", pos);
 //
 //        if (pos != -1) {
-//            IoTHubSubscribedTopicMessageCallback cb = subscribedCallbacks_.at(pos);
+//            MakestroCloudSubscribedTopicMessageCallback cb = subscribedCallbacks_.at(pos);
 //            String realPayload = "";
 //            realPayload.reserve(len);
 //            for (uint32_t i = 0; i < len; i++) {
@@ -147,7 +147,7 @@ void IoTHubClient::_onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttCli
             Serial.println(F("Topic not found"));
         }
         else {
-            IoTHubSubscribedTopicMessageCallback cb = pos->second;
+            MakestroCloudSubscribedTopicMessageCallback cb = pos->second;
 
             String realPayload = "";
             realPayload.reserve(len);
@@ -159,8 +159,8 @@ void IoTHubClient::_onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttCli
         }
     }
 
-    if (_onIotHubMessageUserCallback) {
-        _onIotHubMessageUserCallback(topic, payload, properties, len, index, total);
+    if (_onMakestroCloudMessageUserCallback) {
+        _onMakestroCloudMessageUserCallback(topic, payload, properties, len, index, total);
     }
 
     if (parseMessageAsJson_ && subscribedProperties_.size() > 0) {
@@ -172,7 +172,7 @@ void IoTHubClient::_onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttCli
                     continue;
                 }
 
-                IoTHubSubscribedPropertyCallback cb = myPair.second;
+                MakestroCloudSubscribedPropertyCallback cb = myPair.second;
                 String val = json[myPair.first].asString();
                 cb(myPair.first, val);
             }
@@ -181,7 +181,7 @@ void IoTHubClient::_onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttCli
 }
 
 //template<typename Value>
-//void IoTHubClient::publishKeyValue(String key, Value val) {
+//void MakestroCloudClient::publishKeyValue(String key, Value val) {
 //    const int BUFFER_SIZE = JSON_OBJECT_SIZE(1);
 //    StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
 //    JsonObject &root = jsonBuffer.createObject();
@@ -194,7 +194,7 @@ void IoTHubClient::_onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttCli
 //    publishData(jsonStr);
 //}
 
-void IoTHubClient::publishMap(JsonKeyValueMap keyValMap, const char *iftttEvent, const char *iftttKey) {
+void MakestroCloudClient::publishMap(JsonKeyValueMap keyValMap, const char *iftttEvent, const char *iftttKey) {
     if (keyValMap.size() == 0) {
         return;
     }
@@ -222,7 +222,7 @@ void IoTHubClient::publishMap(JsonKeyValueMap keyValMap, const char *iftttEvent,
     publishData(jsonStr);
 }
 
-void IoTHubClient::triggerIFTTTEvent(const char *iftttEvent, const char *iftttKey) {
+void MakestroCloudClient::triggerIFTTTEvent(const char *iftttEvent, const char *iftttKey) {
     const int BUFFER_SIZE = JSON_OBJECT_SIZE(3);
     StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
     JsonObject &root = jsonBuffer.createObject();

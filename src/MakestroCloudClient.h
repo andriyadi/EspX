@@ -5,7 +5,7 @@
 #ifndef XBOARD_IOTHUB_H
 #define XBOARD_IOTHUB_H
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <AsyncMqttClient.h>
 #include <ArduinoJson.h>
@@ -18,23 +18,23 @@
 #define IOTHUB_DEFAULT_SUBSCRIBE_QOS 2
 #define IOTHUB_DEFAULT_PUBLISH_QOS   2
 
-typedef std::function<void(String, String)> IoTHubSubscribedTopicMessageCallback;
-typedef std::function<void(String, String)> IoTHubSubscribedPropertyCallback;
-typedef std::map<String, IoTHubSubscribedTopicMessageCallback> TopicsHandlerMap_t;
-typedef std::map<String, IoTHubSubscribedPropertyCallback> PropsHandlerMap_t;
+typedef std::function<void(String, String)> MakestroCloudSubscribedTopicMessageCallback;
+typedef std::function<void(String, String)> MakestroCloudSubscribedPropertyCallback;
+typedef std::map<String, MakestroCloudSubscribedTopicMessageCallback> TopicsHandlerMap_t;
+typedef std::map<String, MakestroCloudSubscribedPropertyCallback> PropsHandlerMap_t;
 typedef std::map<const char*, JsonVariant> JsonKeyValueMap;
 
-class IoTHubClient : public AsyncMqttClient {
+class MakestroCloudClient : public AsyncMqttClient {
 public:
-    IoTHubClient(const char* username, const char* userkey, const char* projectName);
-    IoTHubClient();
-    ~IoTHubClient();
+    MakestroCloudClient(const char* username, const char* userkey, const char* projectName);
+    MakestroCloudClient();
+    ~MakestroCloudClient();
 
     AsyncMqttClient& onMessage(AsyncMqttClientInternals::OnMessageUserCallback callback);
 
-    void subscribeWithCallback(String topic, IoTHubSubscribedTopicMessageCallback callback);
-    void subscribeProperty(String property, IoTHubSubscribedPropertyCallback callback);
-    void subscribePropertyWithTopic(String topic, String property, IoTHubSubscribedPropertyCallback callback);
+    void subscribeWithCallback(String topic, MakestroCloudSubscribedTopicMessageCallback callback);
+    void subscribeProperty(String property, MakestroCloudSubscribedPropertyCallback callback);
+    void subscribePropertyWithTopic(String topic, String property, MakestroCloudSubscribedPropertyCallback callback);
 
     void publish(String topic, String payload);
     void publishData(String payload);
@@ -68,12 +68,12 @@ private:
     boolean parseMessageAsJson_ = false;
 
 //    std::vector<String> subscribedTopics_;
-//    std::vector<IoTHubSubscribedTopicMessageCallback> subscribedCallbacks_;
+//    std::vector<MakestroCloudSubscribedTopicMessageCallback> subscribedCallbacks_;
 
     TopicsHandlerMap_t subscribedTopics_;
     PropsHandlerMap_t subscribedProperties_;
 
-    AsyncMqttClientInternals::OnMessageUserCallback _onIotHubMessageUserCallback;
+    AsyncMqttClientInternals::OnMessageUserCallback _onMakestroCloudMessageUserCallback;
 
     void _onIoTHubMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total);
 };

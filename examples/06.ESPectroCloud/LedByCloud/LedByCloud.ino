@@ -7,16 +7,16 @@
 */
 
 #include <ESPectro.h>
-#include <IoTHubClient.h>
+#include <MakestroCloudClient.h>
 #include <DCX_AppSetting.h>
 #include <DCX_WifiManager.h>
 
 ESPectro board;
-IoTHubClient ioTHubClient("[your_username]", "[your_long_token]", "[your_project_name]");
+MakestroCloudClient makestroCloudClient("[your_username]", "[your_long_token]", "[your_project_name]");
 
 DCX_WifiManager wifiManager(AppSetting);
 
-void onMqttMessage(char* topic, char* payload, uint8_t qos, size_t len, size_t index, size_t total) {
+void onMqttMessage(char *topic, char *payload, uint8_t qos, size_t len, size_t index, size_t total) {
     Serial.println("** Publish received **");
     Serial.print("  topic: ");
     Serial.println(topic);
@@ -30,10 +30,25 @@ void onMqttMessage(char* topic, char* payload, uint8_t qos, size_t len, size_t i
     Serial.println(total);
 }
 
+void onSubscribedPropertyCallback(const String prop, const String value) {
+    Serial.print("incoming: ");
+    Serial.print(prop);
+    Serial.print(" = ");
+    Serial.print(value);
+    Serial.println();
+
+    if (value.equals("1")) {
+        board.turnOnLED();
+    }
+    else {
+        board.turnOffLED();
+    }
+}
+
 void onMqttConnect() {
     Serial.println("** Connected to the broker **");
 
-//    IoTHubSubscribedTopicMessageCallback subsCallback = [=](const String topic, const String payload) {
+//    MakestroCloudSubscribedTopicMessageCallback subsCallback = [=](const String topic, const String payload) {
 //        Serial.print("incoming: ");
 //        Serial.print(topic);
 //        Serial.print(" - ");
@@ -41,24 +56,25 @@ void onMqttConnect() {
 //        Serial.println();
 //    };
 //
-//    ioTHubClient.subscribeWithCallback("control", subsCallback);
+//    makestroCloudClient.subscribeWithCallback("control", subsCallback);
 
-    IoTHubSubscribedPropertyCallback propsCallback = [=](const String prop, const String value) {
-        Serial.print("incoming: ");
-        Serial.print(prop);
-        Serial.print(" = ");
-        Serial.print(value);
-        Serial.println();
+//    MakestroCloudSubscribedPropertyCallback propsCallback = [=](const String prop, const String value) {
+//        Serial.print("incoming: ");
+//        Serial.print(prop);
+//        Serial.print(" = ");
+//        Serial.print(value);
+//        Serial.println();
+//
+//        if (value.equals("1")) {
+//            board.turnOnLED();
+//        }
+//        else {
+//            board.turnOffLED();
+//        }
+//    };
 
-        if (value.equals("1")) {
-            board.turnOnLED();
-        }
-        else {
-            board.turnOffLED();
-        }
-    };
-
-    ioTHubClient.subscribeProperty("switch", propsCallback);
+    //makestroCloudClient.subscribeProperty("switch", propsCallback);
+    makestroCloudClient.subscribeProperty("switch", onSubscribedPropertyCallback);
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -76,48 +92,48 @@ void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-  Serial.begin(115200);
-  //Wait Serial to be ready
-  while(!Serial);
-  
-  DEBUG_SERIAL("\r\nInitializing...\r\n\r\n");
-  
-  AppSetting.load();
-  AppSetting.debugPrintTo(Serial);
+    Serial.begin(115200);
+    //Wait Serial to be ready
+    while (!Serial);
 
-  wifiManager.onWifiConnectStarted([]() {
-      DEBUG_SERIAL("WIFI CONNECTING STARTED\r\n");
-      board.turnOnLED();
-  });
+    DEBUG_SERIAL("\r\nInitializing...\r\n\r\n");
 
-  wifiManager.onWifiConnected([](boolean newConn) {
-      DEBUG_SERIAL("WIFI CONNECTED\r\n");
+    AppSetting.load();
+    AppSetting.debugPrintTo(Serial);
 
-      board.turnOffLED();
+    wifiManager.onWifiConnectStarted([]() {
+        DEBUG_SERIAL("WIFI CONNECTING STARTED\r\n");
+        board.turnOnLED();
+    });
 
-      ioTHubClient.onConnect(onMqttConnect);
-      ioTHubClient.onDisconnect(onMqttDisconnect);
-      ioTHubClient.onSubscribe(onMqttSubscribe);
-      //ioTHubClient.onMessage(onMqttMessage);
+    wifiManager.onWifiConnected([](boolean newConn) {
+        DEBUG_SERIAL("WIFI CONNECTED\r\n");
 
-      ioTHubClient.connect();
-  });
+        board.turnOffLED();
 
-  wifiManager.onWifiConnecting([](unsigned long elapsed) {
-      //DEBUG_SERIAL("%d\r\n", elapsed);
-      board.toggleLED();
-  });
+        makestroCloudClient.onConnect(onMqttConnect);
+        makestroCloudClient.onDisconnect(onMqttDisconnect);
+        makestroCloudClient.onSubscribe(onMqttSubscribe);
+        //makestroCloudClient.onMessage(onMqttMessage);
 
-  wifiManager.onWifiDisconnected([](WiFiDisconnectReason reason) {
-      DEBUG_SERIAL("WIFI GIVE UP\r\n");
-      board.turnOffLED();
-  });
+        makestroCloudClient.connect();
+    });
 
-//wifiManager.begin();
-  wifiManager.begin("DyWare-AP4", "p@ssw0rd");
+    wifiManager.onWifiConnecting([](unsigned long elapsed) {
+        //DEBUG_SERIAL("%d\r\n", elapsed);
+        board.toggleLED();
+    });
+
+    wifiManager.onWifiDisconnected([](WiFiDisconnectReason reason) {
+        DEBUG_SERIAL("WIFI GIVE UP\r\n");
+        board.turnOffLED();
+    });
+
+    //wifiManager.begin();
+    wifiManager.begin("your-ssid-name", "your-ssid-password");
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  wifiManager.loop();
+    wifiManager.loop();
 }
