@@ -9,7 +9,7 @@ More details: https://shop.makestro.com/en/product/espectro-core/
 
 To start making and developing your awesome IoT things, two paths are offered:
 
-##PlatformIO
+###PlatformIO
 We recommend to choose this path as it offer some much easiness in term of managing board, managing library and its dependencies, 
 and the freedom to choose your favorite Integrated Development Environment (IDE).
 
@@ -23,7 +23,20 @@ It works on the popular host OS: Mac OS X, Windows, Linux 32/64, Linux ARM (like
 * [Integration with other IDE](http://docs.platformio.org/en/stable/ide.html) - Atom, CLion, Eclipse, Emacs, NetBeans, Qt Creator, Sublime Text, VIM and Visual Studio
 * ESP8266 [Project Examples](http://docs.platformio.org/en/stable/platforms/espressif.html#examples)
 
-###Installing Library
+####ESPectro board support
+Make sure ESPectro board is already listed when you type on Terminal/Command Prompt:
+
+```
+pio boards --installed
+```
+
+If it's for unknown cosmic reason it's not there, please install `development` version of `espressif8266` platform by typing on terminal:
+
+```
+pio platform install https://github.com/platformio/platform-espressif8266/archive/develop.zip
+```
+
+####Installing Library
 After you install PlatformIO, to install this library for PlatformIO, all you have to do is typing this command from Terminal/Command Prompt:
 
 ```
@@ -31,7 +44,7 @@ platformio lib install 369
 ```
 
 
-##Arduino IDE
+###Arduino IDE
 Development with Arduino IDE is still supported. Please install the latest [Arduino IDE](http://www.arduino.cc/en/main/software) and make sure that you already add support ESP8266 boards via Boards Manager by following the guide [here](https://github.com/esp8266/Arduino/blob/master/README.md).
 Then, download this repo and unzip it. Put unzipped folder to `libraries` folder of your Arduino IDE (depends on your OS).
 
@@ -57,5 +70,12 @@ Then, please install following libraries:
 Please consult to Arduino documentation on how to install a library for Arduino IDE.
 
 To get started, please try some examples provided, a lot of them.
+
+
+##About Makestro Cloud
+[Makestro Cloud](http://cloud.makestro.com) (formerly known as iothub.id) is our contribution to makers community to get up fast for connecting their things to the cloud.
+It's not meant to be production-grade IoT backend, but you can use it to test publishing data from the things and visualize them to a nice dashboard, or controlling your things. 
+The details about it is still written as we speak. 
+
 
 This documentation will be kept improved. So stay tune.

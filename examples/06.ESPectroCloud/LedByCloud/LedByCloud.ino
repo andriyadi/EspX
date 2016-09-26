@@ -12,7 +12,7 @@
 #include <DCX_WifiManager.h>
 
 ESPectro board;
-IoTHubClient ioTHubClient("andri", "vByOlaA1UZyv8Iw7O9T64F55d9hH7iXZ1o1xkZVogPwVDjK42alDsFInJVb4gGL4", "procode");
+IoTHubClient ioTHubClient("[your_username]", "[your_long_token]", "[your_project_name]");
 
 DCX_WifiManager wifiManager(AppSetting);
 
