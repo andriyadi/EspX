@@ -9,7 +9,6 @@
 #include "DCX_AppSetting.h"
 #include <ESP8266WiFi.h>
 #include <functional>
-#include <Ticker.h>
 
 extern "C" {
 #include "user_interface.h"
