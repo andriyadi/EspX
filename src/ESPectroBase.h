@@ -6,6 +6,8 @@
 #define XBOARD_ESPECTRO_BASE_H
 
 #include "Arduino.h"
+#include <SPI.h>
+#include <ESP8266WiFi.h>
 #include "ESPectroBase_ADC.h"
 #include "ESPectroBase_BMP280.h"
 

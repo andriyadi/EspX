@@ -8,6 +8,8 @@
 
 #include "Arduino.h"
 #include <Wire.h>
+#include <SPI.h>
+#include <ESP8266WiFi.h>
 #include "SX1508.h"
 
 #define ESPECTRO_BASE_GPIOEX_ADDRESS        0x21

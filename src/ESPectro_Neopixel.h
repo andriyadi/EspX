@@ -7,6 +7,8 @@
 
 #include "Arduino.h"
 #include <NeoPixelBus.h>
+#include <SPI.h>
+#include <ESP8266WiFi.h>
 //#include <NeoPixelAnimator.h>
 
 #define ESPECTRO_NEOPIXEL_PIN 15

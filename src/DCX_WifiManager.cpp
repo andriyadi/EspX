@@ -20,7 +20,7 @@ void DCX_WifiManager::begin() {
 
     connectedEventHandler_ = WiFi.onStationModeConnected([](const WiFiEventStationModeConnected& event) {
 #ifdef DEBUG_SERIAL
-        Serial.print("Station connected to: ");
+        Serial.print("Station is connected to: ");
         Serial.println(event.ssid);
 #endif
     });
@@ -99,14 +99,14 @@ void DCX_WifiManager::loop() {
                     smartConfigRequested_ = false;
 //                    connectingToWifi_ = false;
 #ifdef DEBUG_SERIAL
-                    Serial.println(F("SmartConfig Success"));
+                    Serial.println(F("Smart Config Success"));
 #endif
                 }
                 else {
                     if (wifiConnTrial_ > (120000 / WIFI_CONNECTING_INTERVAL)) {
                         smartConfigRequested_ = false;
 #ifdef DEBUG_SERIAL
-                        Serial.println(F("SmartConfig give up"));
+                        Serial.println(F("Smart Config gave up"));
 #endif
                         WiFi.stopSmartConfig();
                         if (wifiDisconnectedHandler_) {
@@ -128,7 +128,7 @@ void DCX_WifiManager::startSmartConfig() {
 
     smartConfigRequested_ = true;
 
-    DEBUG_SERIAL("DAMN, RECONFIG WIFI USING SMART CONFIG\n");
+    DEBUG_SERIAL("Oh no, reconfig WiFi using SMART CONFIG\n");
 
     WiFi.disconnect();
 
@@ -137,7 +137,7 @@ void DCX_WifiManager::startSmartConfig() {
     WiFi.stopSmartConfig(); //make sure
     bool success = WiFi.beginSmartConfig();
     if (!success) {
-        DEBUG_SERIAL("DAMN, SMART CONFIG FAILED\n");
+        DEBUG_SERIAL("Oh no..., SMART CONFIG is FAILED\n");
         smartConfigRequested_ = false;
     }
     else {
@@ -244,7 +244,7 @@ void DCX_WifiManager::tryToConnectWifi() {
 //    cleanupTickerCheckConn();
 //    cleanupTickerSmartConfig();
 
-    DEBUG_SERIAL("YUHU, WIFI CONFIG READY! %s:%s\n", setting_.ssidName.c_str(), setting_.ssidPass.c_str());
+    DEBUG_SERIAL("Yuhu..., WiFi config is ready! SSID:%s\n", setting_.ssidName.c_str());
     //WiFiMulti.addAP(settings_.ssidName.c_str(), settings_.ssidPass.c_str()); // Put you SSID and Password here
     //WifiStation.waitConnection(connectedDelegate_, 30, notConnectedDelegate_); // We recommend 20+ seconds at start
 

@@ -9,6 +9,8 @@
 #include "ESPectro_Constants.h"
 #include <Ticker.h>
 #include <functional>
+#include <SPI.h>
+#include <ESP8266WiFi.h>
 //#include <exception>
 
 class ESPectro_LED {
