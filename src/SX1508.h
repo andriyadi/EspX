@@ -1,5 +1,7 @@
 /******************************************************************************
-SparkFunSX1509.h
+SX1508.h
+
+Adapted from:
 SparkFun SX1509 I/O Expander Library Header File
 Jim Lindblom @ SparkFun Electronics
 Original Creation Date: September 21, 2015
@@ -24,21 +26,21 @@ Distributed as-is; no warranty is given.
 
 #include "Arduino.h"
 
-#ifndef SparkFunSX1509_H
-#define SparkFunSX1509_H
+#ifndef SparkFunSX1508_H
+#define SparkFunSX1508_H
 
 #define RECEIVE_TIMEOUT_VALUE 1000    // Timeout for I2C receive
 
 // These are used for setting LED driver to linear or log mode:
-#define LINEAR        0
+#define LINEAR         0
 #define LOGARITHMIC    1
 
 // These are used for clock config:
-#define INTERNAL_CLOCK_2MHZ    2
-#define EXTERNAL_CLOCK    1
+#define INTERNAL_CLOCK_2MHZ     2
+#define EXTERNAL_CLOCK          1
 
-#define SOFTWARE_RESET 0
-#define HARDWARE_RESET 1
+#define SOFTWARE_RESET          0
+#define HARDWARE_RESET          1
 
 #define ANALOG_OUTPUT 0x3 // To set a pin mode for PWM output
 
@@ -163,7 +165,7 @@ public:
 //		functions on that pin.
 //	
 //	Inputs:
-//		- pin: The SX1508 pin connected to an LED. Should be 0-15.
+//		- pin: The SX1508 pin connected to an LED. Should be 0-7.
 //   	- freq: Sets LED clock frequency divider.
 //		- log: selects either linear or logarithmic mode on the LED drivers
 //			- log defaults to 0, linear mode
@@ -177,7 +179,7 @@ public:
 //		of an output pin connected to an LED.
 //
 //	Inputs:
-//		- pin: The SX1508 pin connecte to an LED.Should be 0-15.
+//		- pin: The SX1508 pin connected to an LED.Should be 0-7.
 //		- iOn: should be a 0-255 value setting the intensity of the LED
 //			- 0 is completely off, 255 is 100% on.
 //
@@ -192,7 +194,7 @@ public:
 //		tFall):  blink performs both the blink and breath LED driver functions.
 //
 // 	Inputs:
-//  	- pin: the SX1508 pin (0-15) you want to set blinking/breathing.
+//  	- pin: the SX1508 pin (0-7) you want to set blinking/breathing.
 //		- tOn: the amount of time the pin is HIGH
 //			- This value should be between 1 and 31. 0 is off.
 //		- tOff: the amount of time the pin is at offIntensity
@@ -219,7 +221,7 @@ public:
 //  	Set a pin to blink output for estimated on/off millisecond durations.
 //
 // 	Inputs:
-//  	- pin: the SX1508 pin (0-15) you want to set blinking
+//  	- pin: the SX1508 pin (0-7) you want to set blinking
 //   	- tOn: estimated number of milliseconds the pin is LOW (LED sinking current will be on)
 //   	- tOff: estimated number of milliseconds the pin is HIGH (LED sinking current will be off)
 //   	- onIntensity: 0-255 value determining LED on brightness
@@ -237,7 +239,7 @@ public:
 //  	estimated rise and fall durations.
 //
 // 	Inputs:
-//  	- pin: the SX1508 pin (0-15) you want to set blinking
+//  	- pin: the SX1508 pin (0-7) you want to set blinking
 //   	- tOn: estimated number of milliseconds the pin is LOW (LED sinking current will be on)
 //   	- tOff: estimated number of milliseconds the pin is HIGH (LED sinking current will be off)
 //   	- rise: estimated number of milliseconds the pin rises from LOW to HIGH
@@ -245,8 +247,8 @@ public:
 //   	- onIntensity: 0-255 value determining LED on brightness
 //   	- offIntensity: 0-255 value determining LED off brightness
 // 	 Notes: 
-//		- The breathable pins are 4, 5, 6, 7, 12, 13, 14, 15 only. If tRise and 
-//			tFall are set on 0-3 or 8-11 those pins will still only blink.
+//		- The breathable pins are 4, 5, 6, 7 only. If tRise and
+//			tFall are set on 0-3 those pins will still only blink.
 // 		- ledDriverInit should be called on the pin to be blinked before this,
 //  	  Or call pinMode(<pin>, ANALOG_OUTPUT);
 // -----------------------------------------------------------------------------
@@ -387,7 +389,7 @@ public:
 //		on rising, falling, or both.
 //
 //	Inputs: 
-//		-pin: SX1508 input pin that will generate an input. Should be 0-15.
+//		-pin: SX1508 input pin that will generate an input. Should be 0-7.
 //		-riseFall: Configures if you want an interrupt generated on rise fall or
 //			both. For this param, send the pin-change values previously defined 
 //			by Arduino:
@@ -458,7 +460,4 @@ public:
     void clock(byte oscSource = 2, byte oscDivider = 1, byte oscPinFunction = 0, byte oscFreqOut = 0);
 };
 
-// Add backwards compatibility for the old class name: sx1509Class
-typedef SX1508 sx1509Class;
-
-#endif	// SX1509_library_H
+#endif	// SX1508_library_H

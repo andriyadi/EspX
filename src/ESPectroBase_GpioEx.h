@@ -36,7 +36,7 @@ public:
     void turnOffLED();
     void blinkLED(unsigned long tOn, unsigned long tOff, byte onIntensity = 255, byte offIntensity = 0);
 private:
-    //byte i2cDeviceAddress_;
+    byte i2cDeviceAddress_;
 };
 
 
