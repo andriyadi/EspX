@@ -12,9 +12,18 @@
 #include <ESP8266WiFi.h>
 #include "SX1508.h"
 
-#define ESPECTRO_BASE_GPIOEX_ADDRESS        0x21
-#define ESPECTRO_BASE_GPIOEX_BUTTON_PIN     1
+#define ESPECTRO_BASE_GPIOEX_ADDRESS        0x20
+#define ESPECTRO_BASE_GPIOEX_BUTTON_PIN     0
 #define ESPECTRO_BASE_GPIOEX_LED_PIN        2
+
+#define IOX0                                  0
+#define IOX1                                  1
+#define IOX2                                  2
+#define IOX3                                  3
+#define IOX4                                  4
+#define IOX5                                  5
+#define IOX6                                  6
+#define IOX7                                  7
 
 class ESPectroBase_GpioEx: public SX1508 {
 public:

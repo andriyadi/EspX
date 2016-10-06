@@ -11,10 +11,11 @@ ESPectro_Button             KEYWORD1
 ESPectro_LED                KEYWORD1
 ESPectroBase_ADC            KEYWORD1
 DCX_WifiManager             KEYWORD1
-ESPectro_Neopixel
+ESPectro_Neopixel           KEYWORD1
 ESPectro_Neopixel_Default   KEYWORD1
 ESPectro_Neopixel_UART      KEYWORD1
 ESPectro_Neopixel_DMA       KEYWORD1
+MakestroCloudClient         KEYWORD1
 
 ################################################################################
 # Methods and Functions (KEYWORD2)
@@ -33,3 +34,6 @@ ESPECTRO_BUTTON_PIN		        LITERAL1
 
 ESPECTRO_BASE_ADC_POT_CHANNEL	LITERAL1
 ESPECTRO_BASE_ADC_LDR_CHANNEL   LITERAL1
+
+ESPECTRO_BASE_GPIOEX_BUTTON_PIN LITERAL1
+ESPECTRO_BASE_GPIOEX_LED_PIN    LITERAL1

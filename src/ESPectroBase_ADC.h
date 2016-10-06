@@ -9,8 +9,17 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#define ESPECTRO_BASE_ADC_POT_CHANNEL        0
-#define ESPECTRO_BASE_ADC_LDR_CHANNEL        4
+#define ESPECTRO_BASE_ADC_POT_CHANNEL       0
+#define ESPECTRO_BASE_ADC_LDR_CHANNEL       4
+
+#define AX0                                  0
+#define AX1                                  1
+#define AX2                                  2
+#define AX3                                  3
+#define AX4                                  4
+#define AX5                                  5
+#define AX6                                  6
+#define AX7                                  7
 
 class ESPectroBase_ADC {
 
