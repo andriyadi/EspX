@@ -77,6 +77,8 @@ Then, please install following libraries:
 * ESPAsyncTCP: https://github.com/me-no-dev/ESPAsyncTCP
 * ArduinoJson: https://github.com/bblanchon/ArduinoJson
 
+Or if you already have those library installed, make sure to have the latest version.
+
 Please consult to Arduino documentation on how to install a library for Arduino IDE.
 
 To get started, please try some examples provided, a lot of them.
@@ -85,7 +87,7 @@ To get started, please try some examples provided, a lot of them.
 ##About Makestro Cloud
 [Makestro Cloud](http://cloud.makestro.com) (formerly known as iothub.id) is our contribution to makers community to get up fast for connecting their things to the cloud.
 It's not meant to be production-grade IoT backend, but you can use it to test publishing data from the things and visualize them to a nice dashboard, or controlling your things. 
-The details about it is still written as we speak. 
-
-
+The details about it is still written as we speak. For now, let's get acquainted with it by here: [https://www.hackster.io/winter/getting-started-with-makestro-cloud-f4a646](https://www.hackster.io/winter/getting-started-with-makestro-cloud-f4a646), 
+or watching this intro video and follow it along: [https://youtu.be/7HNz-JNF8EU](https://youtu.be/7HNz-JNF8EU)
+ 
 This documentation will be kept improved. So stay tune.
