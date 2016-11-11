@@ -45,7 +45,7 @@ void onSubscribedPropertyCallback(const String prop, const String value) {
     }
 }
 
-void onMqttConnect() {
+void onMqttConnect(bool sessionPresent) {
     Serial.println("** Connected to the broker **");
 
 //    MakestroCloudSubscribedTopicMessageCallback subsCallback = [=](const String topic, const String payload) {

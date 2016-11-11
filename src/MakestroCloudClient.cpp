@@ -12,6 +12,7 @@ MakestroCloudClient::MakestroCloudClient(const char *username, const char *userk
     setClientId(String(String(username) + "-" + String(projectName) + deviceId).c_str());
 
     setKeepAlive(10);
+    setCleanSession(false);
 
 //    subscribedTopics_.reserve(10);
 //    subscribedCallbacks_.reserve(10);
