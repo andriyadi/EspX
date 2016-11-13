@@ -83,7 +83,6 @@ Please consult to Arduino documentation on how to install a library for Arduino 
 
 To get started, please try some examples provided, a lot of them.
 
-
 ##About Makestro Cloud
 [Makestro Cloud](http://cloud.makestro.com) (formerly known as iothub.id) is our contribution to makers community to get up fast for connecting their things to the cloud.
 It's not meant to be production-grade IoT backend, but you can use it to test publishing data from the things and visualize them to a nice dashboard, or controlling your things. 

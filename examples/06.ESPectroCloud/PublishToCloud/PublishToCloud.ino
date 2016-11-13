@@ -30,51 +30,8 @@ void onMqttMessage(char *topic, char *payload, uint8_t qos, size_t len, size_t i
     Serial.println(total);
 }
 
-void onSubscribedPropertyCallback(const String prop, const String value) {
-    Serial.print("incoming: ");
-    Serial.print(prop);
-    Serial.print(" = ");
-    Serial.print(value);
-    Serial.println();
-
-    if (value.equals("1")) {
-        board.turnOnLED();
-    }
-    else {
-        board.turnOffLED();
-    }
-}
-
 void onMqttConnect(bool sessionPresent) {
     Serial.println("** Connected to the broker **");
-
-//    MakestroCloudSubscribedTopicMessageCallback subsCallback = [=](const String topic, const String payload) {
-//        Serial.print("incoming: ");
-//        Serial.print(topic);
-//        Serial.print(" - ");
-//        Serial.print(payload);
-//        Serial.println();
-//    };
-//
-//    makestroCloudClient.subscribeWithCallback("control", subsCallback);
-
-//    MakestroCloudSubscribedPropertyCallback propsCallback = [=](const String prop, const String value) {
-//        Serial.print("incoming: ");
-//        Serial.print(prop);
-//        Serial.print(" = ");
-//        Serial.print(value);
-//        Serial.println();
-//
-//        if (value.equals("1")) {
-//            board.turnOnLED();
-//        }
-//        else {
-//            board.turnOffLED();
-//        }
-//    };
-
-    //makestroCloudClient.subscribeProperty("switch", propsCallback);
-    makestroCloudClient.subscribeProperty("switch", onSubscribedPropertyCallback);
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -135,5 +92,20 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
+    //To check wifi connection
     wifiManager.loop();
+
+    static uint16_t counter = 0;
+    static unsigned long lastPublished = 0;
+
+    
+    if (makestroCloudClient.connected()) { //First, check if it's connected
+        if (millis() - lastPublished > 2000) { //Publish every 2 seconds
+          lastPublished = millis();
+
+          //Publish to cloud, number data with the key "counter". You can easily change it for publishing sensor data, for example.
+          makestroCloudClient.publishKeyValue("counter", counter);
+          counter++;    
+        }
+    }
 }
