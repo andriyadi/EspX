@@ -98,14 +98,14 @@ void loop() {
     static uint16_t counter = 0;
     static unsigned long lastPublished = 0;
 
-    
+
     if (makestroCloudClient.connected()) { //First, check if it's connected
         if (millis() - lastPublished > 2000) { //Publish every 2 seconds
-          lastPublished = millis();
+            lastPublished = millis();
 
-          //Publish to cloud, number data with the key "counter". You can easily change it for publishing sensor data, for example.
-          makestroCloudClient.publishKeyValue("counter", counter);
-          counter++;    
+            //Publish to cloud, number data with the key "counter". You can easily change it for publishing sensor data, for example.
+            makestroCloudClient.publishKeyValue("counter", counter);
+            counter++;
         }
     }
 }

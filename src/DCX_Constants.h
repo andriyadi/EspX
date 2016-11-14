@@ -20,7 +20,7 @@
 #define WIFI_CONNECTING_INTERVAL            500
 
 // Uncomment to support LoRa, if you have the module
-//#define LORA_SUPPORT
+#define LORA_SUPPORT
 
 #ifdef LORA_SUPPORT
 
