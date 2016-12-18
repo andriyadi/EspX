@@ -5,6 +5,9 @@
 #include <c_types.h>
 #include "ESPectro.h"
 
+int espectroLedBlinkCount_ = 0;
+int espectroLedBlinkMaxCount_ = 0;
+
 ESPectro_LED::ESPectro_LED(byte pin, boolean activeHigh): pin_(pin), activeHigh_(activeHigh) {
 }
 
@@ -38,6 +41,12 @@ byte ESPectro_LED::getPin() {
 }
 
 void doBlink(ESPectro_LED *led) {
+
+    if (espectroLedBlinkMaxCount_ > 0 && espectroLedBlinkCount_ >= 2*espectroLedBlinkMaxCount_) {
+        led->stopBlink();
+        return;
+    }
+
     boolean isOn = led->isOn();
     if (isOn) {
         led->turnOff();
@@ -45,6 +54,8 @@ void doBlink(ESPectro_LED *led) {
     else {
         led->turnOn();
     }
+
+    espectroLedBlinkCount_++;
 }
 
 void ESPectro_LED::stopBlink() {
@@ -55,11 +66,19 @@ void ESPectro_LED::stopBlink() {
     }
 }
 
-void ESPectro_LED::blink(int interval) {
+void ESPectro_LED::blink(int interval, int count) {
 
     if (blinkTicker_ == NULL) {
         blinkTicker_ = new Ticker();
     }
+    if (count > 0) {
+        espectroLedBlinkMaxCount_ = count;
+        espectroLedBlinkCount_ = 0;
+    }
+    else {
+        espectroLedBlinkMaxCount_ = 0;
+    }
+
     blinkTicker_->detach();
     delay(10);
     blinkTicker_->attach_ms(interval, doBlink, this);
@@ -96,8 +115,8 @@ void ESPectro::turnOffLED() {
     getLED().turnOff();
 }
 
-void ESPectro::blinkLED(int interval) {
-    getLED().blink(interval);
+void ESPectro::blinkLED(int interval, int count) {
+    getLED().blink(interval, count);
 }
 
 ESPectro_LED &ESPectro::getLED() {

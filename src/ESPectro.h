@@ -9,6 +9,7 @@
 #include "ESPectro_Constants.h"
 #include <Ticker.h>
 #include <functional>
+#include <Wire.h>
 #include <SPI.h>
 #include <ESP8266WiFi.h>
 //#include <exception>
@@ -23,7 +24,7 @@ public:
     void turnOff();
     boolean isOn();
     byte getPin();
-    void blink(int interval = 500);
+    void blink(int interval = 500, int count = 0);
     void stopBlink();
     void toggle();
 
@@ -42,7 +43,7 @@ public:
     ESPectro_LED &getLED();
     void turnOnLED();
     void turnOffLED();
-    void blinkLED(int interval = 500);
+    void blinkLED(int interval = 500, int count = 0);
     void stopBlinkLED();
     void toggleLED();
 
