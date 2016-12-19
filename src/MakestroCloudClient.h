@@ -13,7 +13,7 @@
 #include <vector>
 #include <map>
 
-#define IOTHUB_HOST "iothub.id"
+#define IOTHUB_HOST "cloud.makestro.com"
 #define IOTHUB_PORT 1883
 #define IOTHUB_DEFAULT_SUBSCRIBE_QOS 2
 #define IOTHUB_DEFAULT_PUBLISH_QOS   2

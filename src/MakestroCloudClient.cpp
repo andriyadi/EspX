@@ -39,7 +39,8 @@ MakestroCloudClient::~MakestroCloudClient() {
 void MakestroCloudClient::publish(String topic, String payload) {
     if (username_ != NULL && !topic.startsWith(String(username_))) {
         String project = String(projectName_);
-        project.toLowerCase();
+        //project.toLowerCase();
+        project.replace(" ", "");
         topic = String(username_) + "/" + project + "/" + topic;
     }
 
@@ -53,7 +54,8 @@ void MakestroCloudClient::publishData(String payload) {
 void MakestroCloudClient::subscribeWithCallback(String topic, MakestroCloudSubscribedTopicMessageCallback callback) {
     if (username_ != NULL && !topic.startsWith(String(username_))) {
         String project = String(projectName_);
-        project.toLowerCase();
+        //project.toLowerCase();
+        project.replace(" ", "");
         topic = String(username_) + "/" + project + "/" + topic;
     }
 
@@ -76,7 +78,8 @@ void MakestroCloudClient::subscribePropertyWithTopic(String endTopic, String pro
     //only subscribe when no subscribed properties
     if (subscribedProperties_.size() == 0) {
         String project = String(projectName_);
-        project.toLowerCase();
+        //project.toLowerCase();
+        project.replace(" ", "");
         String topic = String(username_) + "/" + project + "/" + endTopic;
 
         AsyncMqttClient::subscribe(topic.c_str(), IOTHUB_DEFAULT_SUBSCRIBE_QOS);
@@ -200,7 +203,7 @@ void MakestroCloudClient::publishMap(JsonKeyValueMap keyValMap, const char *iftt
         return;
     }
 
-    const int BUFFER_SIZE = JSON_OBJECT_SIZE(10);
+    const int BUFFER_SIZE = JSON_OBJECT_SIZE(20);
     StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
     JsonObject &root = jsonBuffer.createObject();
 
