@@ -251,12 +251,31 @@ void DCX_WifiManager::tryToConnectWifi() {
 //    connectedToWifi_ = false;
 //    connectingToWifi_ = true;
 
+    //Check first if it's connected
+    if (WiFi.isConnected()) {
+        static struct station_config conf;
+        wifi_station_get_config(&conf);
+        DEBUG_SERIAL("Already connected! SSID:%s\n", conf.ssid);
+
+        const char* ssid = reinterpret_cast<const char*>(conf.ssid);
+        if (setting_.ssidName.equals(ssid)) {
+            wifiDidConnected();
+            return;
+        }
+        else {
+            WiFi.disconnect();
+        }
+    }
+
     smartConfigRequested_ = false;
 
     wifiConnTrial_ = 0;
     wifiConnCheckingMillis_ = millis();
 
-    WiFi.begin(setting_.ssidName.c_str(), setting_.ssidPass.c_str());
+    auto status = WiFi.begin(setting_.ssidName.c_str(), setting_.ssidPass.c_str());
+    if (status == WL_CONNECTED) {
+        DEBUG_SERIAL("Connected, may not got IP\n");
+    }
 
     if (wifiConnectStartedCallback_) {
         wifiConnectStartedCallback_();
