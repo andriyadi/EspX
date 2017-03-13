@@ -7,12 +7,20 @@
 MakestroCloudClient::MakestroCloudClient(const char *username, const char *userkey, const char* projectName, const char* deviceId):
         username_(username), userkey_(userkey), projectName_(projectName), deviceId_(deviceId), AsyncMqttClient() {
 
+    char* tempClientId = (char*) malloc(sizeof(char) * 100);
+
+    if (!deviceId) {
+        sprintf(tempClientId, "%s-%s-default", username_, projectName_);
+    } else {
+        strcpy(tempClientId, deviceId);
+    }
+
     setServer(IOTHUB_HOST, IOTHUB_PORT);
     setCredentials(username_, userkey_);
-    setClientId(String(String(username) + "-" + String(projectName) + deviceId).c_str());
+    setClientId(tempClientId);
 
     setKeepAlive(10);
-    setCleanSession(false);
+    setCleanSession(true);
 
 //    subscribedTopics_.reserve(10);
 //    subscribedCallbacks_.reserve(10);

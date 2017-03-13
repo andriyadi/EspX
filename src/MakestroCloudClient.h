@@ -26,7 +26,7 @@ typedef std::map<const char*, JsonVariant> JsonKeyValueMap;
 
 class MakestroCloudClient : public AsyncMqttClient {
 public:
-    MakestroCloudClient(const char* username, const char* userkey, const char* projectName, const char* deviceId = "00001");
+    MakestroCloudClient(const char* username, const char* userkey, const char* projectName, const char* deviceId = nullptr);
     MakestroCloudClient();
     ~MakestroCloudClient();
 
