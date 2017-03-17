@@ -1,12 +1,14 @@
 # ESPectro
 ESP8266 extended library for Arduino framework, especially for ESPectro development board, that supports Arduino IDE and Platformio.
 
-##Update
+## Important Update!
 In previous version, this library also includes support to work with Makestro Cloud. 
-That support is removed in this version as this library should be all about ESPectro, no need for cloud integration.
+Starting with v0.7.0 that support is removed, as this library should be all about ESPectro, no need for cloud integration.
 The specific Makestro Cloud client library is made available here: https://github.com/dycodex/MakestroCloudClient
 
-##About ESPectro
+Version 0.7.0 or above is also optimized for **ESPectro Core board v3**. It still has backward compability with previous version. Just make sure you add `ESPectro_V2` parameter when instantiate ESPectro object.
+
+## About ESPectro
 It's an ESP8266 development board as the culmination of our 1+ year experience in exploring and developing products with ESP8266 MCU. 
 Initially designed for kids in mind, everybody should be able to use it. 
 Yet it's still hacker-friendly as we break out all ESP8266 ESP-12F pins.
@@ -14,7 +16,7 @@ More details: https://shop.makestro.com/en/product/espectro-core/
 
 To start making and developing your awesome IoT things, two paths are offered:
 
-###PlatformIO
+### PlatformIO
 We recommend to choose this path as it offer some much easiness in term of managing board, managing library and its dependencies, 
 and the freedom to choose your favorite Integrated Development Environment (IDE).
 
@@ -29,10 +31,10 @@ It works on the popular host OS: Mac OS X, Windows, Linux 32/64, Linux ARM (like
 * ESP8266 [Project Examples](http://docs.platformio.org/en/stable/platforms/espressif.html#examples)
 
 
-####PlatformIO IDE
+#### PlatformIO IDE
 To get started fast with PlatformIO, we recommend you to install PlatformIO IDE from [here](http://platformio.org/platformio-ide).
 
-####ESPectro board support
+#### ESPectro board support
 Make sure ESPectro board is already listed when you type on Terminal/Command Prompt or from the Terminal inside PlatformIO IDE:
 
 ```
@@ -51,7 +53,7 @@ Then try to list boards again, you should see:
 espectro                       ESP8266        80Mhz     4096kB  80kB   ESPrectro Core
 ```
 
-####Installing Library
+#### Installing Library
 After you install PlatformIO, to install this library for PlatformIO, all you have to do is typing this command from Terminal/Command Prompt:
 
 ```
@@ -59,7 +61,7 @@ platformio lib install 369
 ```
 
 
-###Arduino IDE
+### Arduino IDE
 Development with Arduino IDE is still supported. Please install the latest [Arduino IDE](http://www.arduino.cc/en/main/software) and make sure that you already add support ESP8266 boards via Boards Manager by following the guide [here](https://github.com/esp8266/Arduino/blob/master/README.md).
 Then, download this repo and unzip it. Put unzipped folder to `libraries` folder of your Arduino IDE (depends on your OS).
 
@@ -85,7 +87,7 @@ Please consult to Arduino documentation on how to install a library for Arduino 
 
 To get started, please try some examples provided, a lot of them.
 
-##About Makestro Cloud
+## About Makestro Cloud
 [Makestro Cloud](http://cloud.makestro.com) (formerly known as iothub.id) is our contribution to makers community to get up fast for connecting their things to the cloud.
 It's not meant to be production-grade IoT backend, but you can use it to test publishing data from the things and visualize them to a nice dashboard, or controlling your things. 
 Let's get acquainted with it by here: [https://www.hackster.io/winter/getting-started-with-makestro-cloud-f4a646](https://www.hackster.io/winter/getting-started-with-makestro-cloud-f4a646), 
