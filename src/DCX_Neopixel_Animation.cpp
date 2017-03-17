@@ -95,22 +95,13 @@ void DCX_Neopixel_PulseAnimation::start() {
 
         // use the curve value to apply to the animation
         RgbColor updatedColor = RgbColor::LinearBlend(original, target, progress);
-        mySelf->neopixel_.SetPixelColor(0, updatedColor);
+
+        for(uint16_t i = 0; i < mySelf->neopixel_.PixelCount(); i++) {
+            mySelf->neopixel_.SetPixelColor(i, updatedColor);
+        }
 
         if (progress >= 0.9999) {
             //Serial.println("Animation DONE");
-
-//                if (stripBlinkCount > 0) {
-//                    animateToColor(toColor);
-//                }
-//                else {
-//                    //if (stripEffectState_ == 0) {
-//                    //Serial.println(F("COLOR CORRECTED"));
-//                    strip.SetPixelColor(NEOPIXEL_STATUS_LED_INDEX, RgbColor(0));
-//                    strip.Show();
-//                    //}
-//                }
-//                stripBlinkCount--;
 
             //Repeat
             mySelf->start();
@@ -129,7 +120,9 @@ void DCX_Neopixel_PulseAnimation::end() {
 
     DCX_Neopixel_Animation::end();
 
-    neopixel_.SetPixelColor(0, RgbColor(0));
+    for(uint16_t i = 0; i < neopixel_.PixelCount(); i++) {
+        neopixel_.SetPixelColor(i, RgbColor(0));
+    }
     neopixel_.Show();
 
     if (animator_ != NULL) {
@@ -150,7 +143,7 @@ void DCX_Neopixel_PulseAnimation::setPulsingInterval(uint16_t pulsingInterval) {
     pulsingInterval_ = pulsingInterval;
 }
 
-
+//------
 
 DCX_Neopixel_CyclonAnimation::DCX_Neopixel_CyclonAnimation(ESPectro_Neopixel_Default &neopixel):
         DCX_Neopixel_Animation(neopixel) {

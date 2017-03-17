@@ -37,6 +37,8 @@ private:
     uint16_t blinkMaxCount_ = 0;
 };
 
+
+
 enum ESPectro_Version { ESPectro_V2, ESPectro_V3};
 
 class ESPectro {
@@ -52,6 +54,7 @@ public:
     void stopBlinkLED();
     void toggleLED();
 
+    //Neopixel convinient methods
     ESPectro_Neopixel_Default &getNeopixel();
     void turnOnNeopixel(NeoGrbFeature::ColorObject colorObject, uint16_t pixelNo = 0);
     void turnOffNeopixel(uint16_t pixelNo = 0);
@@ -62,6 +65,8 @@ private:
     ESPectro_Neopixel_Default *neopixel_ = NULL;
     ESPectro_Version version_;
 };
+
+
 
 enum ESPectro_Button_State { Pressed, Released, LongPressed};
 typedef std::function<void()> ButtonActionCallback;

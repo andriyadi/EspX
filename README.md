@@ -6,7 +6,7 @@ In previous version, this library also includes support to work with Makestro Cl
 Starting with v0.7.0 that support is removed, as this library should be all about ESPectro, no need for cloud integration.
 The specific Makestro Cloud client library is made available here: https://github.com/dycodex/MakestroCloudClient
 
-Version 0.7.0 or above is also optimized for **ESPectro Core board v3**. It still has backward compability with previous version. Just make sure you add `ESPectro_V2` parameter when instantiate ESPectro object.
+Version 0.7.0 or above is also optimized for **ESPectro Core board v3**. It's still backward compatible with previous version. Just make sure you add `ESPectro_V2` parameter when instantiate ESPectro object.
 
 ## About ESPectro
 It's an ESP8266 development board as the culmination of our 1+ year experience in exploring and developing products with ESP8266 MCU. 
