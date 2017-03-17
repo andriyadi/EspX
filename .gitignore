@@ -5,4 +5,4 @@ CMakeListsPrivate.txt
 src/ESPectro_Sample.cpp
 .DS_Store
 .idea/
-._backup/
+_backup/
