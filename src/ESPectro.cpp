@@ -5,9 +5,6 @@
 #include <c_types.h>
 #include "ESPectro.h"
 
-int espectroLedBlinkCount_ = 0;
-int espectroLedBlinkMaxCount_ = 0;
-
 ESPectro_LED::ESPectro_LED(byte pin, boolean activeHigh): pin_(pin), activeHigh_(activeHigh) {
 }
 
@@ -40,22 +37,25 @@ byte ESPectro_LED::getPin() {
     return pin_;
 }
 
-void doBlink(ESPectro_LED *led) {
-
-    if (espectroLedBlinkMaxCount_ > 0 && espectroLedBlinkCount_ >= 2*espectroLedBlinkMaxCount_) {
-        led->stopBlink();
+void ESPectro_LED::performBlink() {
+    if (blinkMaxCount_ > 0 && blinkCount_ >= 2*blinkMaxCount_) {
+        stopBlink();
         return;
     }
 
-    boolean isOn = led->isOn();
-    if (isOn) {
-        led->turnOff();
+    boolean _isOn = isOn();
+    if (_isOn) {
+        turnOff();
     }
     else {
-        led->turnOn();
+        turnOn();
     }
 
-    espectroLedBlinkCount_++;
+    blinkCount_++;
+}
+
+void doBlink(ESPectro_LED *led) {
+    led->performBlink();
 }
 
 void ESPectro_LED::stopBlink() {
@@ -72,11 +72,11 @@ void ESPectro_LED::blink(int interval, int count) {
         blinkTicker_ = new Ticker();
     }
     if (count > 0) {
-        espectroLedBlinkMaxCount_ = count;
-        espectroLedBlinkCount_ = 0;
+        blinkMaxCount_ = count;
+        blinkCount_ = 0;
     }
     else {
-        espectroLedBlinkMaxCount_ = 0;
+        blinkMaxCount_ = 0;
     }
 
     blinkTicker_->detach();
@@ -95,7 +95,7 @@ void ESPectro_LED::toggle() {
 
 
 
-ESPectro::ESPectro() {
+ESPectro::ESPectro(ESPectro_Version v):version_(v) {
 
 }
 
@@ -103,6 +103,11 @@ ESPectro::~ESPectro() {
     if (led_ != NULL) {
         delete led_;
         led_ = NULL;
+    }
+
+    if (neopixel_ != NULL) {
+        delete neopixel_;
+        neopixel_ = NULL;
     }
 }
 
@@ -136,28 +141,73 @@ void ESPectro::toggleLED() {
     getLED().toggle();
 }
 
+ESPectro_Neopixel_Default &ESPectro::getNeopixel() {
+    if (neopixel_ == NULL) {
+        if (version_ >= ESPectro_V3) {
+            neopixel_ = new ESPectro_Neopixel_Default(3, ESPECTRO_NEOPIXEL_PIN_V3);
+        } else {
+            neopixel_ = new ESPectro_Neopixel_Default(1, ESPECTRO_NEOPIXEL_PIN);
+        }
+        neopixel_->Begin();
+    }
 
-static volatile boolean XBoard_Button_Value_Changed = false;
+    return *neopixel_;
+}
 
-ESPectro_Button::ESPectro_Button(uint8_t pin, boolean activeHigh):
-        pin_(pin), activeHigh_(activeHigh)
+void ESPectro::turnOnNeopixel(NeoGrbFeature::ColorObject colorObject, uint16_t pixelNo) {
+    getNeopixel().turnOn(colorObject, pixelNo);
+}
+
+void ESPectro::turnOffNeopixel(uint16_t pixelNo) {
+    getNeopixel().turnOff(pixelNo);
+}
+
+void ESPectro::turnOffAllNeopixel() {
+    for(uint16_t i = 0; i < getNeopixel().PixelCount(); i++) {
+        getNeopixel().turnOff(i);
+    }
+}
+
+/* the global instance pointer */
+ESPectro_Button *ESPectro_Button::pESPButton = NULL;
+static volatile bool ESPectro_Button_Value_Changed = false;
+static volatile bool ESPectro_Button_RunAlreadyCalled_ = false;
+
+ESPectro_Button::ESPectro_Button(ESPectro_Version v, uint8_t gpio, boolean activeHigh):
+        gpioNumber_(gpio), activeHigh_(activeHigh), version_(v)
 
 {
+    if (gpio == ESPECTRO_BUTTON_PIN && v == ESPectro_V3) {
+        gpioNumber_ = ESPECTRO_BUTTON_PIN_V3;
+    }
 }
 
 ESPectro_Button::~ESPectro_Button() {
 
 }
 
-void XBoard_Button_Interrupt() {
-    XBoard_Button_Value_Changed = true;
-    //Serial.printf("Button triggered %d\r\n", digitalRead(XBOARD_BUTTON_PIN));
+void ESPectro_Button_Interrupt() {
+    ESPectro_Button_Value_Changed = true;
+    //Serial.printf("Button triggered %d\r\n", digitalRead(ESPECTRO_BUTTON_PIN));
+
+    if (!ESPectro_Button_RunAlreadyCalled_) {
+        ESPectro_Button *const pESPButton = ESPectro_Button::GetInstance();
+        //ASSERT(pESPButton != NULL);
+
+        pESPButton->run();
+    }
 }
 
 void ESPectro_Button::begin() {
-    pinMode(pin_, activeHigh_? INPUT_PULLDOWN_16: INPUT_PULLUP);
-    if (pin_ != 16) {
-        attachInterrupt(pin_, XBoard_Button_Interrupt, CHANGE);
+
+    //ASSERT(ESPectro_Button::pESPButton == this || ESPectro_Button::pESPButton == NULL);
+    ESPectro_Button::pESPButton = this;
+
+    //Serial.printf("Button gpio %d\r\n", gpioNumber_);
+
+    pinMode(gpioNumber_, activeHigh_ ? INPUT_PULLDOWN_16 : INPUT_PULLUP);
+    if (gpioNumber_ != 16) {
+        attachInterrupt(gpioNumber_, ESPectro_Button_Interrupt, CHANGE);
     }
     else {
         Serial.println(F("Unsupported pin for interrupt"));
@@ -184,14 +234,15 @@ void ESPectro_Button::onLongPressed(ButtonActionCallback cb) {
 }
 
 ESPectro_Button_State ESPectro_Button::getState() {
-    //return digitalRead(pin_);
     return Released;
 }
 
-void ESPectro_Button::loop() {
+void ESPectro_Button::run() {
+
+    ESPectro_Button_RunAlreadyCalled_ = true;
     unsigned long currentMillis = millis();
 
-    if (!XBoard_Button_Value_Changed) {
+    if (!ESPectro_Button_Value_Changed) {
 
         if (buttonState_ == Pressed && (currentMillis - lastButtonPressedMillis_ > ESPECTRO_BUTTON_LONG_PRESS_DURATION_MS)) {
             buttonState_ = LongPressed;
@@ -203,7 +254,7 @@ void ESPectro_Button::loop() {
     }
     else {
 
-        XBoard_Button_Value_Changed = false;
+        ESPectro_Button_Value_Changed = false;
 
         if ((currentMillis - lastButtonChangedMillis_) > ESPECTRO_BUTTON_DEBOUNCE_DURATION_MS) {
             lastButtonChangedMillis_ = currentMillis;
@@ -213,7 +264,7 @@ void ESPectro_Button::loop() {
             return;
         }
 
-        int buttonState = digitalRead(pin_);
+        int buttonState = digitalRead(gpioNumber_);
         boolean pressed = activeHigh_ ? buttonState == HIGH : buttonState == LOW;
         if (pressed) {
             lastButtonPressedMillis_ = currentMillis;

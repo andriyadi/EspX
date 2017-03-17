@@ -64,5 +64,5 @@ void setup() {
 void loop() {
 
   //Must be called inside loop
-  button.loop();
+  button.run();
 }

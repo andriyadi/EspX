@@ -2,8 +2,8 @@
 // Created by Andri Yadi on 8/25/16.
 //
 
-#ifndef XBOARD_ESPECTRO_WIFIMANAGER_H
-#define XBOARD_ESPECTRO_WIFIMANAGER_H
+#ifndef DYCODEX_WIFIMANAGER_H
+#define DYCODEX_WIFIMANAGER_H
 
 #include <Arduino.h>
 #include "DCX_AppSetting.h"
@@ -68,4 +68,4 @@ private:
 };
 
 
-#endif //XBOARD_ESPECTRO_WIFIMANAGER_H
+#endif //DYCODEX_WIFIMANAGER_H

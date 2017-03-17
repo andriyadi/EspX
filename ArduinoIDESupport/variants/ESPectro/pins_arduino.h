@@ -28,7 +28,9 @@
 
 #include "../generic/common.h"
 
-#define ESPECTRO_CORE_VERSION   1.2
+#ifndef ESPECTRO_CORE_VERSION
+#define ESPECTRO_CORE_VERSION   3
+#endif
 
 static const uint8_t SDA = 4;
 static const uint8_t SCL = 5;
@@ -36,8 +38,13 @@ static const uint8_t SCL = 5;
 static const uint8_t LED_BUILTIN = 15;
 static const uint8_t BUILTIN_LED = 15;
 
+#if ESPECTRO_CORE_VERSION == 3
+static const uint8_t BUTTON_BUILTIN = 0;
+static const uint8_t BUILTIN_BUTTON = 0;
+#else
 static const uint8_t BUTTON_BUILTIN = 2;
 static const uint8_t BUILTIN_BUTTON = 2;
+#endif
 
 static const uint8_t RX   	= 3;
 static const uint8_t TX   	= 1;

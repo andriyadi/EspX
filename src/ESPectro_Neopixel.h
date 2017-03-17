@@ -2,16 +2,16 @@
 // Created by Andri Yadi on 8/25/16.
 //
 
-#ifndef XBOARD_ESPECTRO_NEOPIXEL_H
-#define XBOARD_ESPECTRO_NEOPIXEL_H
+#ifndef ESPECTROCORE_ESPECTRO_NEOPIXEL_H
+#define ESPECTROCORE_ESPECTRO_NEOPIXEL_H
 
 #include "Arduino.h"
 #include <NeoPixelBus.h>
-#include <SPI.h>
-#include <ESP8266WiFi.h>
-//#include <NeoPixelAnimator.h>
+#include "ESPectro_Constants.h"
+//#include <SPI.h>
+//#include <ESP8266WiFi.h>
 
-#define ESPECTRO_NEOPIXEL_PIN 15
+//#include <NeoPixelAnimator.h>
 
 template<typename T_COLOR_FEATURE, typename T_METHOD>
 class ESPectro_Neopixel: public NeoPixelBus<T_COLOR_FEATURE, T_METHOD> {
@@ -29,21 +29,21 @@ public:
 //        }
     }
 
-    void turnOn(typename T_COLOR_FEATURE::ColorObject colorObject) {
+    void turnOn(typename T_COLOR_FEATURE::ColorObject colorObject, uint16_t pixelNo = 0) {
         if (this->PixelCount() == 0) {
             return;
         }
 
-        this->SetPixelColor(0, colorObject);
+        this->SetPixelColor(pixelNo, colorObject);
         this->Show();
     }
 
-    void turnOff() {
+    void turnOff(uint16_t pixelNo = 0) {
         if (this->PixelCount() == 0) {
             return;
         }
 
-        this->SetPixelColor(0, RgbColor(0));
+        this->SetPixelColor(pixelNo, RgbColor(0));
         this->Show();
     };
 
@@ -51,7 +51,7 @@ public:
     void loop() {
         if (myAnimator_ != NULL && myAnimator_->IsAnimating())
         {
-            // the normal loop just needs these two to run the active animations
+            // the normal run just needs these two to run the active animations
             myAnimator_->UpdateAnimations();
             this->Show();
         }
@@ -145,7 +145,7 @@ private:
 
 class ESPectro_Neopixel_Default : public ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266BitBang800KbpsMethod> {
 public:
-    ESPectro_Neopixel_Default(uint16_t countPixels = 1, uint8_t pin = ESPECTRO_NEOPIXEL_PIN);
+    ESPectro_Neopixel_Default(uint16_t countPixels = 1, uint8_t pin = ESPECTRO_NEOPIXEL_PIN_V3);
     ~ESPectro_Neopixel_Default();
 };
 
@@ -161,4 +161,4 @@ public:
     ~ESPectro_Neopixel_DMA();
 };
 
-#endif //XBOARD_ESPECTRO_NEOPIXEL_H
+#endif //ESPECTROCORE_ESPECTRO_NEOPIXEL_H

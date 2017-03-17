@@ -20,7 +20,7 @@ void DCX_WifiManager::begin() {
 
     connectedEventHandler_ = WiFi.onStationModeConnected([](const WiFiEventStationModeConnected& event) {
 #ifdef DEBUG_SERIAL
-        Serial.print("Station is connected to: ");
+        Serial.print("[WIFI] Station is connected to: ");
         Serial.println(event.ssid);
 #endif
     });
@@ -28,7 +28,7 @@ void DCX_WifiManager::begin() {
     gotIPEventHandler_ = WiFi.onStationModeGotIP([mySelf](const WiFiEventStationModeGotIP& event)
                                                  {
 #ifdef DEBUG_SERIAL
-                                                     Serial.print("Station connected, IP: ");
+                                                     Serial.print("[WIFI] Station connected, IP: ");
                                                      Serial.println(WiFi.localIP());
 #endif
                                                      mySelf->wifiDidConnected();
@@ -38,17 +38,17 @@ void DCX_WifiManager::begin() {
                                                                {
                                                                    if (event.reason == WIFI_DISCONNECT_REASON_ASSOC_LEAVE ||
                                                                        event.reason == WIFI_DISCONNECT_REASON_AUTH_LEAVE) {
-                                                                       Serial.println("Station leave");
+                                                                       Serial.println("[WIFI] Station leave");
                                                                        return;
                                                                    }
 
                                                                    if (event.reason == WIFI_DISCONNECT_REASON_ASSOC_LEAVE ||
                                                                        event.reason == WIFI_DISCONNECT_REASON_AUTH_LEAVE) {
-                                                                       Serial.println("Station leave");
+                                                                       Serial.println("[WIFI] Station leave");
                                                                        return;
                                                                    }
 #ifdef DEBUG_SERIAL
-                                                                   Serial.println("Station disconnected");
+                                                                   Serial.println("[WIFI] Station disconnected");
                                                                    Serial.println(event.reason);
 #endif
                                                                    mySelf->wifiDidDisconnected(event.reason);
@@ -69,11 +69,13 @@ void DCX_WifiManager::begin(const char *ssid, const char *passphrase) {
     setting_.wifiConfigured = true;
 
 #ifdef DEBUG_SERIAL
-    Serial.printf("WiFi SSID: %s, Pass: %s\r\n", ssid, passphrase);
+    Serial.printf("[WIFI] WiFi SSID: %s, Pass: %s\r\n", ssid, passphrase);
 #endif
 
-    setting_.ssidName = String(ssid);
-    setting_.ssidPass = String(passphrase);
+//    setting_.ssidName = String(ssid);
+//    setting_.ssidPass = String(passphrase);
+    strcpy(setting_.ssidName, ssid);
+    strcpy(setting_.ssidPass, passphrase);
 
     begin();
 }
@@ -99,14 +101,14 @@ void DCX_WifiManager::loop() {
                     smartConfigRequested_ = false;
 //                    connectingToWifi_ = false;
 #ifdef DEBUG_SERIAL
-                    Serial.println(F("Smart Config Success"));
+                    Serial.println(F("[WIFI] Smart Config Success"));
 #endif
                 }
                 else {
                     if (wifiConnTrial_ > (120000 / WIFI_CONNECTING_INTERVAL)) {
                         smartConfigRequested_ = false;
 #ifdef DEBUG_SERIAL
-                        Serial.println(F("Smart Config gave up"));
+                        Serial.println(F("[WIFI] Smart Config gave up"));
 #endif
                         WiFi.stopSmartConfig();
                         if (wifiDisconnectedHandler_) {
@@ -128,7 +130,7 @@ void DCX_WifiManager::startSmartConfig() {
 
     smartConfigRequested_ = true;
 
-    DEBUG_SERIAL("Oh no, reconfig WiFi using SMART CONFIG\n");
+    DEBUG_SERIAL("[WIFI] Oh no, reconfig WiFi using SMART CONFIG\n");
 
     WiFi.disconnect();
 
@@ -137,7 +139,7 @@ void DCX_WifiManager::startSmartConfig() {
     WiFi.stopSmartConfig(); //make sure
     bool success = WiFi.beginSmartConfig();
     if (!success) {
-        DEBUG_SERIAL("Oh no..., SMART CONFIG is FAILED\n");
+        DEBUG_SERIAL("[WIFI] Oh no..., SMART CONFIG is FAILED\n");
         smartConfigRequested_ = false;
     }
     else {
@@ -201,7 +203,7 @@ void DCX_WifiManager::wifiDidConnected() {
     boolean newConnection = (setting_.wifiConfigured == 0);
 
     IPAddress _localIP = WiFi.localIP();
-    setting_.ipAddr = _localIP;
+    //setting_.ipAddr = _localIP;
     setting_.wifiConfigured = true;
 
     static struct station_config conf;
@@ -210,11 +212,12 @@ void DCX_WifiManager::wifiDidConnected() {
     const char* passphrase = reinterpret_cast<const char*>(conf.password);
 
 #ifdef DEBUG_SERIAL
-    Serial.printf("WiFi SSID: %s, Pass: %s\r\n", ssid, passphrase);
+    Serial.printf("[WIFI] WiFi SSID: %s, Pass: %s\r\n", ssid, passphrase);
 #endif
 
-    setting_.ssidName = String(ssid);
-    setting_.ssidPass = String(passphrase);
+//    setting_.ssidName = String(ssid);
+//    setting_.ssidPass = String(passphrase);
+    setting_.saveWiFiSettings(ssid, passphrase, _localIP);
 
     setting_.save();
 
@@ -244,7 +247,9 @@ void DCX_WifiManager::tryToConnectWifi() {
 //    cleanupTickerCheckConn();
 //    cleanupTickerSmartConfig();
 
-    DEBUG_SERIAL("Yuhu..., WiFi config is ready! SSID:%s\n", setting_.ssidName.c_str());
+//    DEBUG_SERIAL("Yuhu..., WiFi config is ready! SSID:%s\n", setting_.ssidName.c_str());
+    DEBUG_SERIAL("[WIFI] Yuhu..., WiFi config is ready! SSID:%s\n", setting_.ssidName);
+
     //WiFiMulti.addAP(settings_.ssidName.c_str(), settings_.ssidPass.c_str()); // Put you SSID and Password here
     //WifiStation.waitConnection(connectedDelegate_, 30, notConnectedDelegate_); // We recommend 20+ seconds at start
 
@@ -255,10 +260,11 @@ void DCX_WifiManager::tryToConnectWifi() {
     if (WiFi.isConnected()) {
         static struct station_config conf;
         wifi_station_get_config(&conf);
-        DEBUG_SERIAL("Already connected! SSID:%s\n", conf.ssid);
+        DEBUG_SERIAL("[WIFI] Already connected! SSID:%s\n", conf.ssid);
 
         const char* ssid = reinterpret_cast<const char*>(conf.ssid);
-        if (setting_.ssidName.equals(ssid)) {
+//        if (setting_.ssidName.equals(ssid)) {
+        if (strcmp(ssid, setting_.ssidName) == 0) {
             wifiDidConnected();
             return;
         }
@@ -272,9 +278,10 @@ void DCX_WifiManager::tryToConnectWifi() {
     wifiConnTrial_ = 0;
     wifiConnCheckingMillis_ = millis();
 
-    auto status = WiFi.begin(setting_.ssidName.c_str(), setting_.ssidPass.c_str());
+//    auto status = WiFi.begin(setting_.ssidName.c_str(), setting_.ssidPass.c_str());
+    auto status = WiFi.begin(setting_.ssidName, setting_.ssidPass);
     if (status == WL_CONNECTED) {
-        DEBUG_SERIAL("Connected, may not got IP\n");
+        DEBUG_SERIAL("[WIFI] Connected, may not got IP\n");
     }
 
     if (wifiConnectStartedCallback_) {

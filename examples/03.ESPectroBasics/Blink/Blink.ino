@@ -12,6 +12,7 @@ ESPectro board;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
+  //Blink built-in/onboard LED with interval 2000 miliseconds
   board.blinkLED(2000);
 }
 

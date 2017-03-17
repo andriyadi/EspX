@@ -1,13 +1,13 @@
 {
   "name": "ESPectro",
-  "keywords": "iot, ESPectro, iothub.id, makestro, cloud, devboard, esp8266",
-  "description": "ESP8266 extended library, especially for ESPectro devboard and Makestro Cloud client by DycodeX",
+  "keywords": "iot, ESPectro, dycodex, devboard, esp8266",
+  "description": "ESP8266 extended library, especially for ESPectro development board by DycodeX",
   "authors":
   {
     "name": "Andri Yadi",
     "url": "http://www.dycodex.com"
   },
-  "version": "0.6.9",
+  "version": "0.7.0",
   "repository":
   {
     "type": "git",
@@ -17,20 +17,10 @@
   "platforms": "espressif8266",
   "dependencies": [
     {
-      "name": "ArduinoJson",
-      "authors": "Benoit Blanchon",
-      "frameworks": "arduino",
-      "platforms": "espressif8266"
-    },
-    {
       "name": "NeoPixelBus",
       "authors": "Michael Miller",
       "frameworks": "arduino",
       "platforms": "espressif8266"
-    },
-    {
-      "name": "AsyncMqttClient",
-      "authors": "Marvin Roger"
     }
   ]
 }

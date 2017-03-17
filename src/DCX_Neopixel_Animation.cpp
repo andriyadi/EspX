@@ -32,7 +32,7 @@ void DCX_Neopixel_Animation::end() {
     animationPrevStarted_ = false;
 }
 
-void DCX_Neopixel_Animation::loop() {
+void DCX_Neopixel_Animation::run() {
     if (animator_ != NULL) {
         if (animator_->IsAnimating()) {
             animator_->UpdateAnimations();
@@ -235,12 +235,12 @@ void DCX_Neopixel_CyclonAnimation::start() {
         if (param.state == AnimationState_Completed)
         {
             // reverse direction of movement
-            //mySelf->moveDir_ *= -1;
+            mySelf->moveDir_ *= -1;
 
             // done, time to restart this position tracking animation/timer
-            //mySelf->animator_->RestartAnimation(param.index);
+            mySelf->animator_->RestartAnimation(param.index);
 
-            mySelf->animator_->StopAnimation(0);
+            // mySelf->animator_->StopAnimation(0);
         }
     };
 
@@ -258,7 +258,7 @@ void DCX_Neopixel_CyclonAnimation::start() {
     animator_->StartAnimation(0, 5, fadeAnimUpdate);
 
     // take several seconds to move eye fron one side to the other
-    animator_->StartAnimation(1, 2000, moveAnimUpdate);
+    animator_->StartAnimation(1, 1000, moveAnimUpdate);
 }
 
 void DCX_Neopixel_CyclonAnimation::end() {
@@ -271,7 +271,7 @@ void DCX_Neopixel_CyclonAnimation::end() {
 //    animationPrevStarted_ = false;
 }
 
-//void DCX_Neopixel_CyclonAnimation::loop() {
+//void DCX_Neopixel_CyclonAnimation::run() {
 //
 //    if (animator_ != NULL) {
 //        if (animator_->IsAnimating()) {

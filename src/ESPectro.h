@@ -2,16 +2,15 @@
 // Created by Andri Yadi on 7/31/16.
 //
 
-#ifndef XBOARD_ESPECTRO_H
-#define XBOARD_ESPECTRO_H
+#ifndef ESPECTROCORE_ESPECTRO_H
+#define ESPECTROCORE_ESPECTRO_H
 
 #include "Arduino.h"
 #include "ESPectro_Constants.h"
 #include <Ticker.h>
 #include <functional>
-#include <Wire.h>
-#include <SPI.h>
 #include <ESP8266WiFi.h>
+#include "ESPectro_Neopixel.h"
 //#include <exception>
 
 class ESPectro_LED {
@@ -27,16 +26,22 @@ public:
     void blink(int interval = 500, int count = 0);
     void stopBlink();
     void toggle();
+    void performBlink();
 
 private:
     byte pin_;
     boolean activeHigh_;
     Ticker *blinkTicker_ = NULL;
+
+    uint16_t blinkCount_ = 0;
+    uint16_t blinkMaxCount_ = 0;
 };
+
+enum ESPectro_Version { ESPectro_V2, ESPectro_V3};
 
 class ESPectro {
 public:
-    ESPectro();
+    ESPectro(ESPectro_Version v = ESPectro_V3);
     ~ESPectro();
 
     //LED convinient methods
@@ -47,9 +52,15 @@ public:
     void stopBlinkLED();
     void toggleLED();
 
+    ESPectro_Neopixel_Default &getNeopixel();
+    void turnOnNeopixel(NeoGrbFeature::ColorObject colorObject, uint16_t pixelNo = 0);
+    void turnOffNeopixel(uint16_t pixelNo = 0);
+    void turnOffAllNeopixel();
+
 private:
     ESPectro_LED *led_ = NULL;
-
+    ESPectro_Neopixel_Default *neopixel_ = NULL;
+    ESPectro_Version version_;
 };
 
 enum ESPectro_Button_State { Pressed, Released, LongPressed};
@@ -57,20 +68,33 @@ typedef std::function<void()> ButtonActionCallback;
 
 class ESPectro_Button {
 public:
-    ESPectro_Button(uint8_t pin = ESPECTRO_BUTTON_PIN, boolean activeHigh = false);
+    ESPectro_Button(ESPectro_Version v = ESPectro_V3, uint8_t gpio = ESPECTRO_BUTTON_PIN, boolean activeHigh = false);
     ~ESPectro_Button();
 
     void begin();
     ESPectro_Button_State getState();
-    void loop();
+    void run();
     void onButtonDown(ButtonActionCallback cb);
     void onButtonUp(ButtonActionCallback cb);
     void onPressed(ButtonActionCallback cb);
     void onLongPressed(ButtonActionCallback cb);
 
+    void setGpioNumber(uint8_t g) {
+        gpioNumber_ = g;
+    }
+
+    static ESPectro_Button *GetInstance()
+    {
+        return ESPectro_Button::pESPButton;
+    }
+
 private:
-    uint8_t pin_;
-    boolean activeHigh_;
+
+    static ESPectro_Button *pESPButton;
+
+    ESPectro_Version version_;
+    uint8_t gpioNumber_;
+    bool activeHigh_;
     ESPectro_Button_State buttonState_ = Released;
 
     unsigned long lastButtonChangedMillis_  = 0, lastButtonPressedMillis_ = 0;
@@ -81,4 +105,4 @@ private:
     ButtonActionCallback longPressedCallback_;
 };
 
-#endif //XBOARD_ESPECTRO_H
+#endif //ESPECTROCORE_ESPECTRO_H

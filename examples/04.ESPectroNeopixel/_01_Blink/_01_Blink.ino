@@ -6,20 +6,19 @@
   by Andri Yadi
 */
 
-#include <ESPectro_Neopixel.h>
+#include <ESPectro.h>
 
-ESPectro_Neopixel_Default neopixel;
+ESPectro board(ESPectro_V3);
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-  neopixel.Begin();
-  neopixel.Show();
+    board.turnOffAllNeopixel();
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  neopixel.turnOn(HtmlColor(0x0000ff));
-  delay(1000);
-  neopixel.turnOff();
-  delay(1000);
+    board.turnOnNeopixel(HtmlColor(0x0000ff));
+    delay(1000);
+    board.turnOffNeopixel();
+    delay(1000);
 }

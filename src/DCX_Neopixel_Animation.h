@@ -2,8 +2,8 @@
 // Created by Andri Yadi on 9/1/16.
 //
 
-#ifndef XBOARD_DCX_NEOPIXEL_ANIMATION_H
-#define XBOARD_DCX_NEOPIXEL_ANIMATION_H
+#ifndef DYCODEX_NEOPIXEL_ANIMATION_H
+#define DYCODEX_NEOPIXEL_ANIMATION_H
 
 
 #include "ESPectro_Neopixel.h"
@@ -18,7 +18,7 @@ public:
     ~DCX_Neopixel_Animation();
     void start();
     void end();
-    void loop();
+    void run();
     void onAnimationCompleted(AnimationCompletedCallback cb);
 
 protected:
@@ -51,7 +51,7 @@ public:
     ~DCX_Neopixel_CyclonAnimation();
     void start();
     void end();
-//    void loop();
+//    void run();
 //    void onAnimationCompleted(AnimationCompletedCallback cb);
     void setAnimationDirection(bool up);
 
@@ -71,4 +71,4 @@ private:
 };
 
 
-#endif //XBOARD_DCX_NEOPIXEL_ANIMATION_H
+#endif //DYCODEX_NEOPIXEL_ANIMATION_H

@@ -1,5 +1,10 @@
 # ESPectro
-ESP8266 extended library, especially for iothub.id client &amp; ESPectro devboard, for Arduino framework and supports Arduino IDE and Platformio.
+ESP8266 extended library for Arduino framework, especially for ESPectro development board, that supports Arduino IDE and Platformio.
+
+##Update
+In previous version, this library also includes support to work with Makestro Cloud. 
+That support is removed in this version as this library should be all about ESPectro, no need for cloud integration.
+The specific Makestro Cloud client library is made available here: https://github.com/dycodex/MakestroCloudClient
 
 ##About ESPectro
 It's an ESP8266 development board as the culmination of our 1+ year experience in exploring and developing products with ESP8266 MCU. 
@@ -73,9 +78,6 @@ Notes:
 Then, please install following libraries:
 
 * NeoPixelBus: https://github.com/Makuna/NeoPixelBus
-* AsyncMqttClient: https://github.com/marvinroger/async-mqtt-client
-* ESPAsyncTCP: https://github.com/me-no-dev/ESPAsyncTCP
-* ArduinoJson: https://github.com/bblanchon/ArduinoJson
 
 Or if you already have those library installed, make sure to have the latest version.
 
@@ -86,7 +88,8 @@ To get started, please try some examples provided, a lot of them.
 ##About Makestro Cloud
 [Makestro Cloud](http://cloud.makestro.com) (formerly known as iothub.id) is our contribution to makers community to get up fast for connecting their things to the cloud.
 It's not meant to be production-grade IoT backend, but you can use it to test publishing data from the things and visualize them to a nice dashboard, or controlling your things. 
-The details about it is still written as we speak. For now, let's get acquainted with it by here: [https://www.hackster.io/winter/getting-started-with-makestro-cloud-f4a646](https://www.hackster.io/winter/getting-started-with-makestro-cloud-f4a646), 
+Let's get acquainted with it by here: [https://www.hackster.io/winter/getting-started-with-makestro-cloud-f4a646](https://www.hackster.io/winter/getting-started-with-makestro-cloud-f4a646), 
 or watching this intro video and follow it along: [https://youtu.be/7HNz-JNF8EU](https://youtu.be/7HNz-JNF8EU)
  
-This documentation will be kept improved. So stay tune.
+As explained above, this library doesn't include support of Makestro Cloud client anymore. Please refer to this [repo](https://github.com/dycodex/MakestroCloudClient)
+
