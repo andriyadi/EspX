@@ -8,8 +8,6 @@
 #include "Arduino.h"
 #include <NeoPixelBus.h>
 #include "ESPectro_Constants.h"
-//#include <SPI.h>
-//#include <ESP8266WiFi.h>
 
 #undef ESPECTRO_CORE_VERSION
 #define ESPECTRO_CORE_VERSION   3 //change this for another board version

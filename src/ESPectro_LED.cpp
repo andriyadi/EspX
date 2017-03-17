@@ -113,12 +113,13 @@ void ESPectro_LED::startAnimation() {
 
 void ESPectro_LED::stopAnimation() {
 
+    if (!animating_) { return; }
+
     animating_ = false;
 
-    //black all
-    turnOff();
-
     if (animator_ != NULL) {
+        analogWrite(pin_, 0);
+
         delete animator_;
         animator_ = NULL;
     }
@@ -128,6 +129,9 @@ void ESPectro_LED::stopAnimation() {
         delete animTicker_;
         animTicker_ = NULL;
     }
+
+    //black all
+    turnOff();
 }
 
 bool ESPectro_LED::isAnimating() const {
