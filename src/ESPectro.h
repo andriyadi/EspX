@@ -26,8 +26,8 @@ public:
     ESPectro_LED &getLED();
     void turnOnLED();
     void turnOffLED();
-    void blinkLED(uint32_t interval = 500, uint32_t count = 0);
-    void fadeLED(uint32_t duration = 1000, uint32_t count = INT32_MAX);
+    void blinkLED(uint32_t interval = 500, uint32_t count = UINT16_MAX);
+    void fadeLED(uint32_t duration = 1000, uint32_t count = UINT16_MAX);
     void stopLEDAnimation();
     void toggleLED();
 

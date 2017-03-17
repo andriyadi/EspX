@@ -11,7 +11,8 @@
 //#include <SPI.h>
 //#include <ESP8266WiFi.h>
 
-//#include <NeoPixelAnimator.h>
+#undef ESPECTRO_CORE_VERSION
+#define ESPECTRO_CORE_VERSION   3 //change this for another board version
 
 template<typename T_COLOR_FEATURE, typename T_METHOD>
 class ESPectro_Neopixel: public NeoPixelBus<T_COLOR_FEATURE, T_METHOD> {
@@ -142,12 +143,19 @@ private:
 
 };
 
-
-class ESPectro_Neopixel_Default : public ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266BitBang800KbpsMethod> {
+#if ESPECTRO_CORE_VERSION == 3
+class ESPectro_Neopixel_Default : public ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266Uart800KbpsMethod> {
 public:
-    ESPectro_Neopixel_Default(uint16_t countPixels = 1, uint8_t pin = ESPECTRO_NEOPIXEL_PIN_V3);
+    ESPectro_Neopixel_Default(uint16_t countPixels = 3, uint8_t pin = ESPECTRO_NEOPIXEL_PIN_V3);
     ~ESPectro_Neopixel_Default();
 };
+#else
+class ESPectro_Neopixel_Default : public ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266BitBang800KbpsMethod> {
+public:
+    ESPectro_Neopixel_Default(uint16_t countPixels = 1, uint8_t pin = ESPECTRO_NEOPIXEL_PIN);
+    ~ESPectro_Neopixel_Default();
+};
+#endif
 
 class ESPectro_Neopixel_UART : public ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266Uart800KbpsMethod> {
 public:
@@ -155,7 +163,7 @@ public:
     ~ESPectro_Neopixel_UART();
 };
 
-class ESPectro_Neopixel_DMA : public ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266Dma800KbpsMethod> {
+class ESPectro_Neopixel_DMA : public ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266Dma400KbpsMethod> {
 public:
     ESPectro_Neopixel_DMA(uint16_t countPixels = 1, uint8_t pin = 3);
     ~ESPectro_Neopixel_DMA();

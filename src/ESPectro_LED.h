@@ -181,13 +181,13 @@ public:
     byte getPin();
     void toggle();
 
-    void blink(uint32_t interval = 500, uint32_t count = INT32_MAX);
-    void fade(uint32_t duration = 2000, uint32_t count = INT32_MAX);
+    void blink(uint32_t interval = 500, uint32_t count = UINT16_MAX);
+    void fade(uint32_t duration = 2000, uint32_t count = UINT16_MAX);
 
     void startAnimation();
     void stopAnimation();
     bool isAnimating() const;
-    void setAnimation(ESPectro_LED_Animator::ESPectro_LED_AnimationType animType, uint32_t speed, uint32_t count = INT32_MAX);
+    void setAnimation(ESPectro_LED_Animator::ESPectro_LED_AnimationType animType, uint32_t speed, uint32_t count = UINT16_MAX);
     void setAnimationTimeout(unsigned long timeOut);
     void updateAnimation();
 

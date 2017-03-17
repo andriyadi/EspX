@@ -36,7 +36,7 @@ ESPectro_Neopixel<T_COLOR_FEATURE, T_METHOD>::ESPectro_Neopixel(uint16_t countPi
 //}
 
 ESPectro_Neopixel_Default::ESPectro_Neopixel_Default(uint16_t countPixels, uint8_t pin):
-        ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266BitBang800KbpsMethod>(countPixels, pin)  {
+        ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266Uart800KbpsMethod>(countPixels, pin)  {
 
 }
 
@@ -56,7 +56,7 @@ ESPectro_Neopixel_UART::~ESPectro_Neopixel_UART() {
 
 
 ESPectro_Neopixel_DMA::ESPectro_Neopixel_DMA(uint16_t countPixels, uint8_t pin):
-        ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266Dma800KbpsMethod>(countPixels, pin){
+        ESPectro_Neopixel<NeoGrbFeature, NeoEsp8266Dma400KbpsMethod>(countPixels, pin){
 
 }
 
