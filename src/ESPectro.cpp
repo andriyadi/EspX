@@ -5,96 +5,6 @@
 #include <c_types.h>
 #include "ESPectro.h"
 
-ESPectro_LED::ESPectro_LED(byte pin, boolean activeHigh): pin_(pin), activeHigh_(activeHigh) {
-}
-
-ESPectro_LED::~ESPectro_LED() {
-    if (blinkTicker_ != NULL) {
-        delete blinkTicker_;
-        blinkTicker_ = NULL;
-    }
-}
-
-void ESPectro_LED::begin() {
-    pinMode(ESPECTRO_LED_PIN, OUTPUT);
-    turnOff();
-}
-
-void ESPectro_LED::turnOn() {
-    digitalWrite(pin_, activeHigh_? HIGH: LOW);
-}
-
-void ESPectro_LED::turnOff() {
-    digitalWrite(pin_, activeHigh_? LOW: HIGH);
-}
-
-boolean ESPectro_LED::isOn() {
-    int val = digitalRead(pin_);
-    return activeHigh_? (val == HIGH): (val == LOW);
-}
-
-byte ESPectro_LED::getPin() {
-    return pin_;
-}
-
-void ESPectro_LED::performBlink() {
-    if (blinkMaxCount_ > 0 && blinkCount_ >= 2*blinkMaxCount_) {
-        stopBlink();
-        return;
-    }
-
-    boolean _isOn = isOn();
-    if (_isOn) {
-        turnOff();
-    }
-    else {
-        turnOn();
-    }
-
-    blinkCount_++;
-}
-
-void doBlink(ESPectro_LED *led) {
-    led->performBlink();
-}
-
-void ESPectro_LED::stopBlink() {
-    if (blinkTicker_ != NULL) {
-        blinkTicker_->detach();
-        delete blinkTicker_;
-        blinkTicker_ = NULL;
-    }
-}
-
-void ESPectro_LED::blink(int interval, int count) {
-
-    if (blinkTicker_ == NULL) {
-        blinkTicker_ = new Ticker();
-    }
-    if (count > 0) {
-        blinkMaxCount_ = count;
-        blinkCount_ = 0;
-    }
-    else {
-        blinkMaxCount_ = 0;
-    }
-
-    blinkTicker_->detach();
-    delay(10);
-    blinkTicker_->attach_ms(interval, doBlink, this);
-}
-
-void ESPectro_LED::toggle() {
-    if (isOn()) {
-        turnOff();
-    }
-    else {
-        turnOn();
-    }
-}
-
-
-
 ESPectro::ESPectro(ESPectro_Version v):version_(v) {
 
 }
@@ -120,8 +30,12 @@ void ESPectro::turnOffLED() {
     getLED().turnOff();
 }
 
-void ESPectro::blinkLED(int interval, int count) {
+void ESPectro::blinkLED(uint32_t interval, uint32_t count) {
     getLED().blink(interval, count);
+}
+
+void ESPectro::fadeLED(uint32_t duration, uint32_t count) {
+    getLED().fade(duration);
 }
 
 ESPectro_LED &ESPectro::getLED() {
@@ -133,8 +47,9 @@ ESPectro_LED &ESPectro::getLED() {
     return *led_;
 }
 
-void ESPectro::stopBlinkLED() {
-    getLED().stopBlink();
+void ESPectro::stopLEDAnimation() {
+//    getLED().stopBlink();
+    getLED().stopAnimation();
 }
 
 void ESPectro::toggleLED() {
@@ -292,5 +207,3 @@ void ESPectro_Button::run() {
         }
     }
 }
-
-

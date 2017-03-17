@@ -11,33 +11,9 @@
 #include <functional>
 #include <ESP8266WiFi.h>
 #include "ESPectro_Neopixel.h"
+#include "ESPectro_LED.h"
+
 //#include <exception>
-
-class ESPectro_LED {
-public:
-    ESPectro_LED(byte pin = ESPECTRO_LED_PIN, boolean activeHigh = true);
-    ~ESPectro_LED();
-
-    void begin();
-    void turnOn();
-    void turnOff();
-    boolean isOn();
-    byte getPin();
-    void blink(int interval = 500, int count = 0);
-    void stopBlink();
-    void toggle();
-    void performBlink();
-
-private:
-    byte pin_;
-    boolean activeHigh_;
-    Ticker *blinkTicker_ = NULL;
-
-    uint16_t blinkCount_ = 0;
-    uint16_t blinkMaxCount_ = 0;
-};
-
-
 
 enum ESPectro_Version { ESPectro_V2, ESPectro_V3};
 
@@ -50,8 +26,9 @@ public:
     ESPectro_LED &getLED();
     void turnOnLED();
     void turnOffLED();
-    void blinkLED(int interval = 500, int count = 0);
-    void stopBlinkLED();
+    void blinkLED(uint32_t interval = 500, uint32_t count = 0);
+    void fadeLED(uint32_t duration = 1000, uint32_t count = INT32_MAX);
+    void stopLEDAnimation();
     void toggleLED();
 
     //Neopixel convinient methods
