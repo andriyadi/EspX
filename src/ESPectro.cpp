@@ -83,6 +83,17 @@ void ESPectro::turnOffAllNeopixel() {
     }
 }
 
+int ESPectro::readAnalog() {
+    return analogRead(A0);
+}
+
+float ESPectro::readAnalogVoltage() {
+    float voltage = readAnalog() * (3.3f / 1023.0f);
+    return voltage;
+}
+
+
+
 /* the global instance pointer */
 ESPectro_Button *ESPectro_Button::pESPButton = NULL;
 static volatile bool ESPectro_Button_Value_Changed = false;
@@ -207,3 +218,4 @@ void ESPectro_Button::run() {
         }
     }
 }
+

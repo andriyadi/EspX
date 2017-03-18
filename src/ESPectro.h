@@ -22,6 +22,9 @@ public:
     ESPectro(ESPectro_Version v = ESPectro_V3);
     ~ESPectro();
 
+    int readAnalog();
+    float readAnalogVoltage();
+
     //LED convinient methods
     ESPectro_LED &getLED();
     void turnOnLED();
