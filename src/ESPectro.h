@@ -13,6 +13,8 @@
 #include "ESPectro_Neopixel.h"
 #include "ESPectro_LED.h"
 
+#include <ArduinoOTA.h>
+
 //#include <exception>
 
 enum ESPectro_Version { ESPectro_V2, ESPectro_V3};
@@ -22,6 +24,9 @@ public:
     ESPectro(ESPectro_Version v = ESPectro_V3);
     ~ESPectro();
 
+    void run();
+
+    //Analog
     int readAnalog();
     float readAnalogVoltage();
 
@@ -40,10 +45,15 @@ public:
     void turnOffNeopixel(uint16_t pixelNo = 0);
     void turnOffAllNeopixel();
 
+    //OTA
+    void beginOTA();
+
 private:
     ESPectro_LED *led_ = NULL;
     ESPectro_Neopixel_Default *neopixel_ = NULL;
     ESPectro_Version version_;
+
+    ArduinoOTAClass *ota_;
 };
 
 

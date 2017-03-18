@@ -5,6 +5,8 @@
 #ifndef ESPECTRO_CONSTANTS_H_H
 #define ESPECTRO_CONSTANTS_H_H
 
+#include "DCX_Constants.h"
+
 //Constants
 #define ESPECTRO_LED_PIN                            15
 

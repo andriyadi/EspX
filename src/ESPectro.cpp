@@ -4,6 +4,7 @@
 
 #include <c_types.h>
 #include "ESPectro.h"
+#include <ESP8266mDNS.h>
 
 ESPectro::ESPectro(ESPectro_Version v):version_(v) {
 
@@ -19,8 +20,18 @@ ESPectro::~ESPectro() {
         delete neopixel_;
         neopixel_ = NULL;
     }
+
+    if (ota_ != NULL) {
+        delete ota_;
+        ota_ = NULL;
+    }
 }
 
+void ESPectro::run() {
+    if (ota_ != NULL) {
+        ota_->handle();
+    }
+}
 
 void ESPectro::turnOnLED() {
     getLED().turnOn();
@@ -92,6 +103,34 @@ float ESPectro::readAnalogVoltage() {
     return voltage;
 }
 
+void ESPectro::beginOTA() {
+    if (ota_ == NULL) {
+        ota_ = new ArduinoOTAClass();
+    }
+
+    ota_->setHostname(SETTING_DEFAULT_AP_NAME);
+
+    ota_->onStart([this]() {
+        this->fadeLED(1200);
+    });
+
+    ota_->onEnd([this]() {
+        this->stopLEDAnimation();
+        this->blinkLED(300, 5);
+    });
+
+    ota_->onError([this](ota_error_t error) {
+        this->stopLEDAnimation();
+        ESP.restart();
+    });
+
+    ota_->onProgress([](unsigned int progress, unsigned int total) {
+        DEBUG_SERIAL("Progress: %u%%\r\n", (progress / (total / 100)));
+    });
+
+    Serial.println(F("Beginning OTA"));
+    ota_->begin();
+}
 
 
 /* the global instance pointer */
@@ -218,4 +257,6 @@ void ESPectro_Button::run() {
         }
     }
 }
+
+
 
