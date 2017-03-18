@@ -27,7 +27,7 @@ public:
 
     void begin();
     void begin(const char* ssid, const char *passphrase);
-    void loop();
+    void run();
 
     //void setConnectedDelegate(ConnectionDelegate connectedDelegate);
     void startSmartConfig();

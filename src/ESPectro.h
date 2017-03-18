@@ -58,7 +58,13 @@ private:
 
 
 
-enum ESPectro_Button_State { Pressed, Released, LongPressed};
+enum ESPectro_Button_State {
+    ESPectroButtonUnknown,
+    ESPectroButtonPressed,
+    ESPectroButtonReleased,
+    ESPectroButtonLongPressed
+};
+
 typedef std::function<void()> ButtonActionCallback;
 
 class ESPectro_Button {
@@ -73,6 +79,7 @@ public:
     void onButtonUp(ButtonActionCallback cb);
     void onPressed(ButtonActionCallback cb);
     void onLongPressed(ButtonActionCallback cb);
+    void onDoublePressed(ButtonActionCallback cb);
 
     void setGpioNumber(uint8_t g) {
         gpioNumber_ = g;
@@ -90,7 +97,7 @@ private:
     ESPectro_Version version_;
     uint8_t gpioNumber_;
     bool activeHigh_;
-    ESPectro_Button_State buttonState_ = Released;
+    ESPectro_Button_State buttonState_ = ESPectroButtonReleased;
 
     unsigned long lastButtonChangedMillis_  = 0, lastButtonPressedMillis_ = 0;
 
@@ -98,6 +105,10 @@ private:
     ButtonActionCallback btnUpCallback_;
     ButtonActionCallback pressedCallback_;
     ButtonActionCallback longPressedCallback_;
+    ButtonActionCallback doublePressedCallback_;
+
+    bool isActive();
+    uint8_t pressCount_ = 0;
 };
 
 #endif //ESPECTROCORE_ESPECTRO_H

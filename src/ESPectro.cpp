@@ -111,7 +111,7 @@ void ESPectro::beginOTA() {
     ota_->setHostname(SETTING_DEFAULT_AP_NAME);
 
     ota_->onStart([this]() {
-        this->fadeLED(1200);
+        this->turnOnLED();
     });
 
     ota_->onEnd([this]() {
@@ -183,7 +183,8 @@ void ESPectro_Button::begin() {
 }
 
 void ESPectro_Button::onPressed(ButtonActionCallback cb) {
-    btnDownCallback_ = cb;
+    //btnDownCallback_ = cb;
+    pressedCallback_ = cb;
 }
 
 void ESPectro_Button::onButtonDown(ButtonActionCallback cb) {
@@ -198,8 +199,12 @@ void ESPectro_Button::onLongPressed(ButtonActionCallback cb) {
     longPressedCallback_ = cb;
 }
 
+void ESPectro_Button::onDoublePressed(ButtonActionCallback cb) {
+    doublePressedCallback_ = cb;
+}
+
 ESPectro_Button_State ESPectro_Button::getState() {
-    return Released;
+    return ESPectroButtonReleased;
 }
 
 void ESPectro_Button::run() {
@@ -209,12 +214,16 @@ void ESPectro_Button::run() {
 
     if (!ESPectro_Button_Value_Changed) {
 
-        if (buttonState_ == Pressed && (currentMillis - lastButtonPressedMillis_ > ESPECTRO_BUTTON_LONG_PRESS_DURATION_MS)) {
-            buttonState_ = LongPressed;
-            //Serial.println(F("Considered Long Pressed"));
-            if (longPressedCallback_) {
-                longPressedCallback_();
+        if ((currentMillis - lastButtonPressedMillis_ > ESPECTRO_BUTTON_LONG_PRESS_DURATION_MS)) {
+
+            if (buttonState_ == ESPectroButtonPressed) {
+                buttonState_ = ESPectroButtonLongPressed;
+                //Serial.println(F("Considered Long Pressed"));
+                if (longPressedCallback_) {
+                    longPressedCallback_();
+                }
             }
+            pressCount_ = 0;
         }
     }
     else {
@@ -229,11 +238,11 @@ void ESPectro_Button::run() {
             return;
         }
 
-        int buttonState = digitalRead(gpioNumber_);
-        boolean pressed = activeHigh_ ? buttonState == HIGH : buttonState == LOW;
+        boolean pressed = isActive();
         if (pressed) {
             lastButtonPressedMillis_ = currentMillis;
-            buttonState_ = Pressed;
+            //lastButtonChangedMillis_ = currentMillis;
+            buttonState_ = ESPectroButtonPressed;
             //Serial.println(F("Pressed"));
             if (btnDownCallback_) {
                 btnDownCallback_();
@@ -247,16 +256,29 @@ void ESPectro_Button::run() {
                 btnUpCallback_();
             }
 
-            if (buttonState_ != LongPressed && currentMillis - lastButtonPressedMillis_ > ESPECTRO_BUTTON_PRESS_DURATION_MS) {
-                buttonState_ = Released;
-                //Serial.println(F("Considered Pressed"));
+            if (buttonState_ != ESPectroButtonLongPressed && currentMillis - lastButtonPressedMillis_ > ESPECTRO_BUTTON_PRESS_DURATION_MS) {
+                buttonState_ = ESPectroButtonReleased;
                 if (pressedCallback_) {
                     pressedCallback_();
+                }
+
+                pressCount_++;
+                //Serial.printf("Pressed count %d\n", pressCount_);
+                if (pressCount_ == 2) {
+                    if (doublePressedCallback_) {
+                        doublePressedCallback_();
+                    }
                 }
             }
         }
     }
 }
 
+
+bool ESPectro_Button::isActive() {
+    int buttonState = digitalRead(gpioNumber_);
+    boolean pressed = activeHigh_ ? buttonState == HIGH : buttonState == LOW;
+    return pressed;
+}
 
 

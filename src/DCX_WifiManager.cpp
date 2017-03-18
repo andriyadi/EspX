@@ -80,7 +80,7 @@ void DCX_WifiManager::begin(const char *ssid, const char *passphrase) {
     begin();
 }
 
-void DCX_WifiManager::loop() {
+void DCX_WifiManager::run() {
 
 //    if (connectingToWifi_ && !connectedToWifi_) {
     if (!WiFi.isConnected()) {
