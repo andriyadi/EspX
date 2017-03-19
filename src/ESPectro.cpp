@@ -4,7 +4,6 @@
 
 #include <c_types.h>
 #include "ESPectro.h"
-#include <ESP8266mDNS.h>
 
 ESPectro::ESPectro(ESPectro_Version v):version_(v) {
 
@@ -116,7 +115,7 @@ void ESPectro::beginOTA() {
 
     ota_->onEnd([this]() {
         this->stopLEDAnimation();
-        this->blinkLED(300, 5);
+        this->blinkLED(300, 3);
     });
 
     ota_->onError([this](ota_error_t error) {

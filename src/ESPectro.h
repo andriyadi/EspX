@@ -13,6 +13,7 @@
 #include "ESPectro_Neopixel.h"
 #include "ESPectro_LED.h"
 
+#include <ESP8266mDNS.h>
 #include <ArduinoOTA.h>
 
 //#include <exception>
@@ -30,7 +31,7 @@ public:
     int readAnalog();
     float readAnalogVoltage();
 
-    //LED convinient methods
+    //LED convenient methods
     ESPectro_LED &getLED();
     void turnOnLED();
     void turnOffLED();
@@ -39,7 +40,7 @@ public:
     void stopLEDAnimation();
     void toggleLED();
 
-    //Neopixel convinient methods
+    //Neopixel convenient methods
     ESPectro_Neopixel_Default &getNeopixel();
     void turnOnNeopixel(NeoGrbFeature::ColorObject colorObject, uint16_t pixelNo = 0);
     void turnOffNeopixel(uint16_t pixelNo = 0);
@@ -53,7 +54,7 @@ private:
     ESPectro_Neopixel_Default *neopixel_ = NULL;
     ESPectro_Version version_;
 
-    ArduinoOTAClass *ota_;
+    ArduinoOTAClass *ota_ = NULL;
 };
 
 
